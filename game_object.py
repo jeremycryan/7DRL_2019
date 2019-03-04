@@ -7,9 +7,13 @@ class GameObject(object):
         self.sprite = Sprite(fps=fps)
         self.x = x
         self.y = y
+        self.vx = 0
+        self.vy = 0
+        self.flipped = False
         self.layer = layer
         self.game = game
         self.map = game.map
+        game.map.add_to_cell(self, (x,y))
         self.sprite.x_pos = self.x * TILE_SIZE
         self.sprite.y_pos = self.y * TILE_SIZE
 
@@ -21,7 +25,7 @@ class GameObject(object):
         self.sprite.update(dt)
 
     def draw(self, surf):
-        self.sprite.draw(surf)
+        self.sprite.draw(surf, self.flipped)
 
     def translate(self, dx, dy):
         if self.collide(self.x+dx, self.y+dy):
@@ -30,6 +34,10 @@ class GameObject(object):
         self.x += dx
         self.y += dy
         self.map.add_to_cell(self, (self.x, self.y))
+        if abs(dx) > 0:
+            self.flipped = dx < 0
+        self.vx = dx
+        self.vy = dy
         return True
 
     def collide(self, x, y):
