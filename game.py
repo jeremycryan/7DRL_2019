@@ -22,7 +22,7 @@ class Game(object):
         					"mv d": lambda: self.player.translate(1, 0),
         					"mv w": lambda: self.player.translate(0, -1),
         					"quit": lambda: (pygame.quit(), sys.exit()),
-        					"stars": lambda: self.toggle_stars() }
+        					"stars": lambda: self.terminal.toggle_stars() }
 
 
     def main(self):
