@@ -67,12 +67,6 @@ class Map(object):
                 for item in self.get((y, x)):
                     item.draw(surf)
 
-    def update(self, dt, xlim, ylim):
-        for x in [i + xlim[0] for i in range(xlim[1] - xlim[0])]:
-            for y in [j + ylim[0] for j in range(ylim[1] - ylim[0])]:
-                for item in self.get((y, x), ("static", False)):
-                    item.update(dt)
-
 
 class Tile(GameObject):
 

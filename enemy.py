@@ -12,6 +12,7 @@ class Enemy(GameObject):
         self.behavior = behavior
         self.delay = delay
         self.timer = 0
+        self.game.movers += [self]
 
     def update(self, dt):
         GameObject.update(self, dt)

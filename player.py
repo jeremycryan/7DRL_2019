@@ -8,6 +8,7 @@ class Player(GameObject):
         idle = SpriteSheet("will.png", (2, 1), 2);
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
+        self.game.movers += [self]
 
     def update(self, dt):
         GameObject.update(self, dt)
