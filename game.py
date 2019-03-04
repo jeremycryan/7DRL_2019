@@ -21,7 +21,9 @@ class Game(object):
         					"mv a": lambda: self.player.translate(-1, 0), 
         					"mv d": lambda: self.player.translate(1, 0),
         					"mv w": lambda: self.player.translate(0, -1),
-        					"quit": lambda: (pygame.quit(), sys.exit()) }
+        					"quit": lambda: (pygame.quit(), sys.exit()),
+        					"stars": lambda: self.toggle_stars() }
+
 
     def main(self):
 
@@ -45,6 +47,7 @@ class Game(object):
             self.update_screen()
             pygame.display.flip()
 
+
     def update_screen(self):
         self.screen_blit.blit(pygame.transform.scale(self.screen, BLIT_SIZE), (0, 0))
 
@@ -64,6 +67,14 @@ class Terminal(object):
         self.back_square.fill((0, 0, 0))
         self.back_square.set_alpha(150)
 
+        self.stars = 0
+
+    def star_mode(self, new_mode):
+        self.stars = new_mode
+
+    def toggle_stars(self):
+        self.star_mode(1 - self.stars)
+
     def update_value(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -77,9 +88,11 @@ class Terminal(object):
 
     def draw(self, surf):
         surf.blit(self.back_square, (0, (WINDOW_HEIGHT - 20)))
-        font_render = self.font.render(self.text, 0, (255, 255, 255))
+        draw_text = self.text
+        if self.stars: draw_text = "*"*len(draw_text)
+        font_render = self.font.render(draw_text, 0, (255, 255, 255))
         surf.blit(font_render, (self.x_pos, self.y_pos))
-        
+
     def execute(self):
         try:
             self.game.executable[self.text]()
@@ -87,6 +100,13 @@ class Terminal(object):
             pass
         
         self.text = ""
+
+
+class Camera(object):
+
+    def __init__(self):
+
+        pass
                 
 
 if __name__=="__main__":
