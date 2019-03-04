@@ -43,8 +43,8 @@ class Game(object):
 
             # Drawing goes here
             self.screen.fill((50, 50, 50))
-            #self.player.update(dt)
-            self.map.update(dt, (0, 30), (0, 30))
+            self.player.update(dt)
+            #self.map.update(dt, (0, 30), (0, 30))
             self.map.draw(self.screen, (0, 30), (0, 30))
             #self.player.draw(self.screen)
             self.terminal.draw(self.screen)
