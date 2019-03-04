@@ -19,11 +19,11 @@ class Game(object):
         self.terminal = Terminal(self)
         Enemy(self, 5, 5)
         self.executable = { "mv s": lambda: self.player.translate(0, 1),
-        					"mv a": lambda: self.player.translate(-1, 0), 
-        					"mv d": lambda: self.player.translate(1, 0),
-        					"mv w": lambda: self.player.translate(0, -1),
-        					"quit": lambda: (pygame.quit(), sys.exit()),
-        					"stars": lambda: self.terminal.toggle_stars() }
+                            "mv a": lambda: self.player.translate(-1, 0), 
+                            "mv d": lambda: self.player.translate(1, 0),
+                            "mv w": lambda: self.player.translate(0, -1),
+                            "quit": lambda: (pygame.quit(), sys.exit()),
+                            "stars": lambda: self.terminal.toggle_stars() }
 
 
     def main(self):
