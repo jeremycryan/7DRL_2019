@@ -5,6 +5,7 @@ from sprite_tools import *
 from constants import *
 from map import Map
 from player import Player
+from enemy import Enemy
 
 class Game(object):
 
@@ -15,8 +16,14 @@ class Game(object):
         self.map = Map((30, 30))
         self.map.populate_random(self)
         self.player = Player(self, 0, 0)
-        self.map.add_to_cell(self.player, (0, 0))
         self.terminal = Terminal(self)
+        Enemy(self, 5, 5)
+        self.executable = { "mv s": lambda: self.player.translate(0, 1),
+        					"mv a": lambda: self.player.translate(-1, 0), 
+        					"mv d": lambda: self.player.translate(1, 0),
+        					"mv w": lambda: self.player.translate(0, -1),
+        					"quit": lambda: (pygame.quit(), sys.exit()),
+        					"stars": lambda: self.terminal.toggle_stars() }
 
 
     def main(self):
@@ -33,9 +40,10 @@ class Game(object):
             events = pygame.event.get()
             self.terminal.update_value(events)
 
-            # Drawing goes here            
+            # Drawing goes here
             self.screen.fill((50, 50, 50))
-            self.player.update(dt)
+            #self.player.update(dt)
+            self.map.update(dt, (0, 30), (0, 30))
             self.map.draw(self.screen, (0, 30), (0, 30))
             #self.player.draw(self.screen)
             self.terminal.draw(self.screen)
@@ -89,19 +97,10 @@ class Terminal(object):
         surf.blit(font_render, (self.x_pos, self.y_pos))
 
     def execute(self):
-        if self.text == "mv s":
-            self.game.player.translate(0, 1)
-        elif self.text == "mv a":
-            self.game.player.translate(-1, 0)
-        elif self.text == "mv d":
-            self.game.player.translate(1, 0)
-        elif self.text == "mv w":
-            self.game.player.translate(0, -1)
-        elif self.text == "quit":
-            pygame.quit()
-            sys.exit()
-        elif self.text == "stars":
-            self.toggle_stars()
+        try:
+            self.game.executable[self.text]()
+        except KeyError:
+            pass
         
         self.text = ""
 

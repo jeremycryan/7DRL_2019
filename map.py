@@ -52,11 +52,11 @@ class Map(object):
             add_to_list = True
             for arg in args:
                 if type(arg) == str:
-                    if not hasattr(thing, arg):
+                    if not hasattr(thing, arg) or not getattr(thing, arg):
                         add_to_list = False
                 else:
-                    if getattr(thing, arg[0]) != arg[1]:
-                        add_to_list = False
+                    if not hasattr(thing, arg[0]) or getattr(thing, arg[0]) != arg[1]:
+                        add_to_list = arg[1]==False
             if add_to_list:
                 return_list.append(thing)
         return return_list
@@ -67,6 +67,12 @@ class Map(object):
                 for item in self.get((y, x)):
                     item.draw(surf)
 
+    def update(self, dt, xlim, ylim):
+        for x in [i + xlim[0] for i in range(xlim[1] - xlim[0])]:
+            for y in [j + ylim[0] for j in range(ylim[1] - ylim[0])]:
+                for item in self.get((y, x), ("static", False)):
+                    item.update(dt)
+
 
 class Tile(GameObject):
 
@@ -75,6 +81,7 @@ class Tile(GameObject):
         static = SpriteSheet("default_tile.png", (1, 1), 1)
         self.sprite.add_animation({"Static": static})
         self.sprite.start_animation("Static")
+        self.static = True
     
 
 class Wall(Tile):
@@ -86,6 +93,7 @@ class Wall(Tile):
         static = SpriteSheet("wall_tile.png", (1, 1), 1)
         self.sprite.add_animation({"Static": static})
         self.sprite.start_animation("Static")
+        self.static = True
     
 
 
