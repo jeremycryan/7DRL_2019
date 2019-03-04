@@ -3,8 +3,8 @@ from sprite_tools import *
 
 class GameObject(object):
 
-    def __init__(self, game, x, y, layer):
-        self.sprite = Sprite()
+    def __init__(self, game, x, y, layer, fps = 4):
+        self.sprite = Sprite(fps=fps)
         self.x = x
         self.y = y
         self.layer = layer
@@ -16,8 +16,8 @@ class GameObject(object):
     def update(self, dt):
         targ_x = self.x * TILE_SIZE
         targ_y = self.y * TILE_SIZE
-        self.sprite.x_pos += (targ_x - self.sprite.x_pos)*dt
-        self.sprite.y_pos += (targ_y - self.sprite.y_pos)*dt
+        self.sprite.x_pos += (targ_x - self.sprite.x_pos)*dt*20
+        self.sprite.y_pos += (targ_y - self.sprite.y_pos)*dt*20
         self.sprite.update(dt)
 
     def draw(self, surf):
