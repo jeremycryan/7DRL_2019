@@ -5,6 +5,7 @@ from sprite_tools import *
 from constants import *
 from map import Map
 from player import Player
+from enemy import Enemy
 
 class Game(object):
 
@@ -15,8 +16,8 @@ class Game(object):
         self.map = Map((30, 30))
         self.map.populate_random(self)
         self.player = Player(self, 0, 0)
-        self.map.add_to_cell(self.player, (0, 0))
         self.terminal = Terminal(self)
+        Enemy(self, 5, 5)
 
 
     def main(self):
@@ -34,7 +35,8 @@ class Game(object):
 
             # Drawing goes here            
             self.screen.fill((50, 50, 50))
-            self.player.update(dt)
+            #self.player.update(dt)
+            self.map.update(dt, (0, 30), (0, 30))
             self.map.draw(self.screen, (0, 30), (0, 30))
             #self.player.draw(self.screen)
             self.terminal.draw(self.screen)

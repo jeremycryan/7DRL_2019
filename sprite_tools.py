@@ -80,6 +80,19 @@ class SpriteSheet(object):
             self.frames[idx] = pygame.transform.flip(frame, xbool, ybool)
 
 
+    def set_reverse(self, xbool=False, ybool=False):
+        """ Sets whether the frames of the animation are reversed """
+
+        #   Flip each frame
+        if xbool==self.reverse_x and ybool==self.reverse_y:
+            return
+        for idx, frame in enumerate(self.frames):
+            self.frames[idx] = pygame.transform.flip(frame, xbool!=self.reverse_x, \
+                                                     ybool!=self.reverse_y)
+        self.reverse_x = xbool
+        self.reverse_y = ybool
+
+
     def get_frame_position(self, n):
         """ Gets the position of the top left corner of frame n, in pixels,
         based on the source image. """
@@ -183,7 +196,7 @@ class Sprite(object):
         self.now += dt
 
 
-    def draw(self, surf):
+    def draw(self, surf, flip_x=False, flip_y=False):
         """ Draws the current frame onto a surface. """
 
         #   Raise an error if the active animation isn't in animations
@@ -194,6 +207,7 @@ class Sprite(object):
 
         #   Load up the active spritesheet
         active_spritesheet = self.animations[self.active_animation]
+        active_spritesheet.set_reverse(flip_x, flip_y)
 
         #   Determine what frame of the animation you should be on
         now = self.now
