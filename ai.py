@@ -18,15 +18,37 @@ def approach_player(enemy):
     dy = enemy.game.player.y - enemy.y
     order = directions[:]
     if abs(dx) >= abs(dy):
-        directions[0] = RIGHT if dx>0 else LEFT
-        directions[1] = DOWN if dy>0 else UP
-        directions[2] = UP if dy>0 else DOWN
-        directions[3] = LEFT if dx>0 else RIGHT
+        order[0] = RIGHT if dx>0 else LEFT
+        order[1] = DOWN if dy>0 else UP
+        order[2] = UP if dy>0 else DOWN
+        order[3] = LEFT if dx>0 else RIGHT
     else:
-        directions[0] = DOWN if dy>0 else UP
-        directions[1] = RIGHT if dx>0 else LEFT
-        directions[2] = LEFT if dx>0 else RIGHT
-        directions[3] = UP if dy>0 else DOWN
+        order[0] = DOWN if dy>0 else UP
+        order[1] = RIGHT if dx>0 else LEFT
+        order[2] = LEFT if dx>0 else RIGHT
+        order[3] = UP if dy>0 else DOWN
     for d in order:
         if enemy.translate(*d):
             return
+
+def approach_player_smart(enemy):
+    dx = enemy.game.player.x - enemy.x + enemy.vx
+    dy = enemy.game.player.y - enemy.y + enemy.vy
+    if abs(dx - enemy.vx) + abs(dy - enemy.vy) == 1:
+        enemy.translate(dx - enemy.vx, dy - enemy.vy)
+        return
+    order = directions[:]
+    if abs(dx) >= abs(dy):
+        order[0] = RIGHT if dx>0 else LEFT
+        order[1] = DOWN if dy>0 else UP
+        order[2] = UP if dy>0 else DOWN
+        order[3] = LEFT if dx>0 else RIGHT
+    else:
+        order[0] = DOWN if dy>0 else UP
+        order[1] = RIGHT if dx>0 else LEFT
+        order[2] = LEFT if dx>0 else RIGHT
+        order[3] = UP if dy>0 else DOWN
+    for d in order:
+        if enemy.translate(*d):
+            return
+
