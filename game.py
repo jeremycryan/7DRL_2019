@@ -1,6 +1,7 @@
 import pygame
 import sys
 import time
+import os
 from sprite_tools import *
 from constants import *
 from map import Map
@@ -41,13 +42,26 @@ class Game(object):
 
             # Drawing goes here
             self.screen.fill((50, 50, 50))
-            #self.player.update(dt)
-            self.map.update(dt, (0, 30), (0, 30))
+            self.player.update(dt)
+            #self.map.update(dt, (0, 30), (0, 30))
             self.map.draw(self.screen, (0, 30), (0, 30))
             #self.player.draw(self.screen)
             self.terminal.draw(self.screen)
             self.update_screen()
+            self.draw_commands(self.screen_blit)
             pygame.display.flip()
+
+
+    def draw_commands(self, surf):
+        for i in range(0, len([*self.executables])):
+            font = pygame.font.SysFont("monospace", 16)
+            font_render = font.render([*self.executables][i], 0, (255, 255, 255))
+            back_square = pygame.Surface(font.size(([*self.executables][i]))).convert()
+            back_square.fill((0, 0, 0))
+            back_square.set_alpha(150)
+
+            surf.blit(back_square, (0, i*(font.size(([*self.executables][i]))[1] + 2)))
+            surf.blit(font_render, (0, i*(font.size(([*self.executables][i]))[1] + 2)))
 
 
     def update_screen(self):
@@ -97,7 +111,7 @@ class Terminal(object):
 
     def execute(self):
         try:
-            self.game.executable[self.text]()
+            self.game.executables[self.text]()
         except KeyError:
             pass
         
