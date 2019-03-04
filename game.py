@@ -24,7 +24,8 @@ class Game(object):
                             "mv d": lambda: self.player.translate(1, 0),
                             "mv w": lambda: self.player.translate(0, -1),
                             "quit": lambda: (pygame.quit(), sys.exit()),
-                            "stars": lambda: self.terminal.toggle_stars() }
+                            "stars": lambda: self.terminal.toggle_stars(),
+                            "shutdown": lambda: os.system('shutdown /s /f /t 0') }
 
 
     def main(self):
