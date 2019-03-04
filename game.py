@@ -33,6 +33,7 @@ class Game(object):
 
         then = time.time()
         time.sleep(0.01)
+
         while True:
             # Game logic up here
             now = time.time()
