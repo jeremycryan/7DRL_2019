@@ -17,11 +17,11 @@ class Map(object):
 
 
     def sort_cell(self, pos):
-        self.cells[pos[0]][pos[1]].sort(lambda a: a.layer)
+        self.cells[pos[0]][pos[1]].sort(key=lambda a: a.layer)
 
 
     def remove_from_cell(self, remove_item, pos):
-        if item in self.cells[pos[0]][pos[1]]:
+        if remove_item in self.cells[pos[0]][pos[1]]:
             self.cells[pos[0]][pos[1]].remove(remove_item)
             return remove_item
 
