@@ -4,7 +4,7 @@ from sprite_tools import *
 
 class Enemy(GameObject):
 
-    def __init__(self, game, x, y, delay=1, behavior=ai.approach_player):
+    def __init__(self, game, x, y, delay=3, behavior=ai.approach_player_smart):
         GameObject.__init__(self, game, x, y, layer=4)
         idle = SpriteSheet("bug.png", (2, 1), 2);
         self.sprite.add_animation({"Idle": idle})
