@@ -2,6 +2,7 @@ import pygame
 import sys
 import time
 import os
+from math import sin, pi
 from sprite_tools import *
 from constants import *
 from map import Map
@@ -150,7 +151,18 @@ class Camera(object):
 
         self.speed = 1.0
 
+        self.shake_max_amp = 4
+        self.shake_amp = 0
+        self.shake_t_off = 0
+        self.shake_freq = 10
+        shake_duration = 0.3
+        self.shake_decay = 1.0/shake_duration
+
+        self.t = 0
+
     def update(self, dt):
+
+        self.t += dt
         
         dx = self.target_x - self.x
         dy = self.target_y - self.y
@@ -158,7 +170,18 @@ class Camera(object):
         self.x += dx * dt * 3
         self.y += dy * dt * 3
 
+        self.shake_amp = max(0, self.shake_amp - self.shake_decay * dt * self.shake_max_amp)
+
         return dt * self.speed
+
+    def shake(self, amplitude = 1.0):
+        self.shake_amp = self.shake_max_amp * amplitude
+
+    def get_x(self):
+        return self.x
+
+    def get_y(self):
+        return self.y + sin(self.shake_freq * 2 * pi * self.t)*self.shake_amp
                 
 
 if __name__=="__main__":

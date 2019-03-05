@@ -71,4 +71,5 @@ class Enemy(GameObject):
     def hit(self, player):
         self.reboundx = player.x - self.x
         self.reboundy = player.y - self.y
+        self.game.camera.shake()
         print("Oof!")
