@@ -37,6 +37,7 @@ class Game(object):
 
     def main(self):
 
+        self.dts = []
         then = time.time()
         time.sleep(0.01)
         self.camera.speed = 1.0 #   Change this for slow motion
@@ -44,10 +45,10 @@ class Game(object):
         while True:
             # Game logic up here
             now = time.time()
-            dt = now - then
+            real_dt = now - then
             then = now
 
-            dt = self.camera.update(dt)
+            dt = self.camera.update(real_dt)
             
             events = pygame.event.get()
             self.terminal.update_value(events)
@@ -64,6 +65,7 @@ class Game(object):
             #self.player.draw(self.screen)
             self.terminal.draw(self.screen)
             self.update_screen()
+            self.draw_fps(real_dt)   #   TODO remove from final build
             self.draw_commands(self.screen_blit)
             pygame.display.flip()
 
@@ -89,6 +91,16 @@ class Game(object):
         self.screen_blit.blit(pygame.transform.scale(self.screen, BLIT_SIZE), (0, 0))
 
 
+    def draw_fps(self, dt):
+        self.dts.append(dt)
+        if len(self.dts) > 50:
+            self.dts = self.dts[-50:]
+        dt_avg = sum(self.dts)*1.0/len(self.dts)
+        fps = int(1/dt_avg)
+        fonty_obj = self.terminal.font.render("FPS: " + str(fps), 0, (255, 255, 255))
+        self.screen_blit.blit(fonty_obj, (WINDOW_WIDTH*SCALE - 60, 10))
+
+
 class Terminal(object):
 
     def __init__(self, game):
@@ -96,8 +108,10 @@ class Terminal(object):
         self.text = ""
 
         self.font = pygame.font.SysFont("monospace", 12)
+        self.font_render = self.font.render(self.text, 0, (255, 255, 255))
 
-        self.x_pos = WINDOW_WIDTH/2 - 40
+        self.x_pos = WINDOW_WIDTH/2
+        self.x_pos_woff = self.x_pos - self.font_render.get_width()/2
         self.y_pos = WINDOW_HEIGHT - 15
 
         self.back_square = pygame.Surface((WINDOW_WIDTH, 20)).convert()
@@ -122,13 +136,18 @@ class Terminal(object):
                 elif event.key == pygame.K_RETURN:
                     self.execute()
         if self.text == " ": self.text = ""
+        self.update_text_render()
+
+
+    def update_text_render(self):
+        draw_text = self.text
+        if self.stars: draw_text = "*"*len(draw_text)
+        self.font_render = self.font.render(draw_text, 0, (255, 255, 255))
+        self.x_pos_woff = self.x_pos - self.font_render.get_width()/2
 
     def draw(self, surf):
         surf.blit(self.back_square, (0, (WINDOW_HEIGHT - 20)))
-        draw_text = self.text
-        if self.stars: draw_text = "*"*len(draw_text)
-        font_render = self.font.render(draw_text, 0, (255, 255, 255))
-        surf.blit(font_render, (self.x_pos, self.y_pos))
+        surf.blit(self.font_render, (self.x_pos_woff, self.y_pos))
 
     def execute(self):
         try:
