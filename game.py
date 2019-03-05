@@ -18,11 +18,14 @@ class Game(object):
         self.map = Map((30, 30))
         self.map.populate_rooms(self)
         self.movers = []
-        self.player = Player(self, 1, 1)
+        self.player = Player(self, 2, 2)
         self.terminal = Terminal(self)
         Enemy(self, 5, 5)
         self.camera = Camera()
-        self.executables = {"mv s": lambda: self.player.translate(0, 1),
+        
+        self.command_font = pygame.font.SysFont("monospace", 16)
+        
+        self.executables = { "mv s": lambda: self.player.translate(0, 1),
                             "mv a": lambda: self.player.translate(-1, 0), 
                             "mv d": lambda: self.player.translate(1, 0),
                             "mv w": lambda: self.player.translate(0, -1),
@@ -33,6 +36,9 @@ class Game(object):
                             "atk s": lambda: self.player.attack(0, 1),
                             "atk d": lambda: self.player.attack(1, 0),
                             "shutdown": lambda: os.system('shutdown /s /f /t 0') }
+
+        self.command_renders = {}
+        self.command_rectangles = {}
 
 
     def main(self):
@@ -76,15 +82,26 @@ class Game(object):
 
 
     def draw_commands(self, surf):
-        for i in range(0, len([key for key in self.executables])):
-            font = pygame.font.SysFont("monospace", 16)
-            font_render = font.render([key for key in self.executables][i], 0, (255, 255, 255))
-            back_square = pygame.Surface(font.size(([key for key in self.executables][i]))).convert()
-            back_square.fill((0, 0, 0))
-            back_square.set_alpha(150)
+        commands = [key for key in self.executables]
+        commands.sort()
+        for i, key in enumerate(commands):
+            if not key in self.command_renders:
+                self.generate_command_surface(key)
 
-            surf.blit(back_square, (0, i*(font.size(([key for key in self.executables][i]))[1] + 2)))
-            surf.blit(font_render, (0, i*(font.size(([key for key in self.executables][i]))[1] + 2)))
+            font_render = self.command_renders[key]
+            back_square = self.command_rectangles[key]
+
+            surf.blit(back_square, (0, i*(font_render.get_height()+2)))
+            surf.blit(font_render, (0, i*(font_render.get_height()+2)))
+
+
+    def generate_command_surface(self, text):
+        font_render = self.command_font.render(text, 0, (255, 255, 255))
+        back_square = pygame.Surface((font_render.get_width(), font_render.get_height()))
+        back_square.fill((0, 0, 0))
+        back_square.set_alpha(150)
+        self.command_renders[text] = font_render
+        self.command_rectangles[text] = back_square
 
 
     def update_screen(self):
@@ -93,8 +110,8 @@ class Game(object):
 
     def draw_fps(self, dt):
         self.dts.append(dt)
-        if len(self.dts) > 50:
-            self.dts = self.dts[-50:]
+        if len(self.dts) > 300:
+            self.dts = self.dts[-300:]
         dt_avg = sum(self.dts)*1.0/len(self.dts)
         fps = int(1/dt_avg)
         fonty_obj = self.terminal.font.render("FPS: " + str(fps), 0, (255, 255, 255))
