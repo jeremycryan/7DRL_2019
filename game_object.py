@@ -9,6 +9,9 @@ class GameObject(object):
         self.y = y
         self.vx = 0
         self.vy = 0
+        self.reboundx = 0
+        self.reboundy = 0
+        self.hop = 0
         self.flipped = False
         self.layer = layer
         self.game = game
@@ -20,6 +23,9 @@ class GameObject(object):
     def update(self, dt):
         targ_x = self.x * TILE_SIZE
         targ_y = self.y * TILE_SIZE
+        self.reboundx = converge(self.reboundx, dt/REBOUND_DURATION)
+        self.reboundy = converge(self.reboundy, dt/REBOUND_DURATION)
+        self.hop = converge(self.hop, dt/HOP_DURATION)
         self.sprite.x_pos += (targ_x - self.sprite.x_pos)*dt*20
         self.sprite.y_pos += (targ_y - self.sprite.y_pos)*dt*20
         self.sprite.update(dt)
@@ -27,10 +33,17 @@ class GameObject(object):
     def draw(self, surf):
         self.sprite.x_pos -= int(self.game.camera.x)
         self.sprite.y_pos -= int(self.game.camera.y)
+        rebound = self.get_rebound()
+        hop = self.get_hop()
+        self.sprite.x_pos -= rebound[0]
+        self.sprite.y_pos -= rebound[1]
+        self.sprite.y_pos -= hop
         self.sprite.draw(surf, self.flipped)
+        self.sprite.y_pos += hop
+        self.sprite.x_pos += rebound[0]
+        self.sprite.y_pos += rebound[1]
         self.sprite.x_pos += int(self.game.camera.x)
         self.sprite.y_pos += int(self.game.camera.y)
-
 
     def translate(self, dx, dy):
         if self.collide(self.x+dx, self.y+dy):
@@ -43,6 +56,7 @@ class GameObject(object):
             self.flipped = dx < 0
         self.vx = dx
         self.vy = dy
+        self.hop = 1
         return True
 
     def collide(self, x, y):
@@ -50,3 +64,21 @@ class GameObject(object):
         occupants = self.map.get((x, y), ("layer", 4))
         players = self.map.get((x, y), ("layer", 5))
         return collisions or occupants or players
+
+    def get_rebound(self):
+        x = int(4*REBOUND*((abs(self.reboundx)-0.5)**2-0.25))
+        y = int(4*REBOUND*((abs(self.reboundy)-0.5)**2-0.25))
+        x = x if self.reboundx > 0 else -x
+        y = y if self.reboundy > 0 else -y
+        return (x,y)
+
+    def get_hop(self):
+        return -int(4*HOP*((abs(self.hop)-0.5)**2-0.25))
+
+def converge(val, step, target=0):
+    if val > target + step:
+        return val - step
+    elif val < target - step:
+        return val + step
+    else:
+        return target

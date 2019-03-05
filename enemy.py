@@ -48,6 +48,8 @@ class Enemy(GameObject):
         players = self.map.get((self.x+dx, self.y+dy), ("layer", 5))
         if players:
             self.hit(players[0])
+            if abs(dx) > 0:
+                self.flipped = dx < 0
             return True
         return GameObject.translate(self, dx, dy)
 
@@ -67,4 +69,6 @@ class Enemy(GameObject):
         return collisions or occupants
 
     def hit(self, player):
+        self.reboundx = player.x - self.x
+        self.reboundy = player.y - self.y
         print("Oof!")

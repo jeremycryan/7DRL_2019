@@ -7,9 +7,13 @@ SCALE = 3
 BLIT_SIZE = (WINDOW_WIDTH*SCALE, WINDOW_HEIGHT*SCALE)
 
 TILE_SIZE = 20
+REBOUND = 12
+HOP = 12
+REBOUND_DURATION = 0.18
+HOP_DURATION = 0.1
 
 KEYDICT = {pygame.K_a: "a",
-            pygame.K_b: "b",
+           pygame.K_b: "b",
            pygame.K_c: "c",
            pygame.K_d: "d",
            pygame.K_e: "e",
