@@ -57,15 +57,15 @@ class Game(object):
 
 
     def draw_commands(self, surf):
-        for i in range(0, len([*self.executables])):
+        for i in range(0, len([key for key in self.executables])):
             font = pygame.font.SysFont("monospace", 16)
-            font_render = font.render([*self.executables][i], 0, (255, 255, 255))
-            back_square = pygame.Surface(font.size(([*self.executables][i]))).convert()
+            font_render = font.render([key for key in self.executables][i], 0, (255, 255, 255))
+            back_square = pygame.Surface(font.size(([key for key in self.executables][i]))).convert()
             back_square.fill((0, 0, 0))
             back_square.set_alpha(150)
 
-            surf.blit(back_square, (0, i*(font.size(([*self.executables][i]))[1] + 2)))
-            surf.blit(font_render, (0, i*(font.size(([*self.executables][i]))[1] + 2)))
+            surf.blit(back_square, (0, i*(font.size(([key for key in self.executables][i]))[1] + 2)))
+            surf.blit(font_render, (0, i*(font.size(([key for key in self.executables][i]))[1] + 2)))
 
 
     def update_screen(self):
