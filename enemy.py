@@ -1,5 +1,6 @@
 from game_object import GameObject
 import ai
+import random
 from sprite_tools import *
 
 class Enemy(GameObject):
@@ -11,7 +12,7 @@ class Enemy(GameObject):
         self.sprite.start_animation("Idle")
         self.behavior = behavior
         self.delay = delay
-        self.timer = 0
+        self.timer = delay*random.random()
         self.prop_to_move = 0
         self.game.movers += [self]
 

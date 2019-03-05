@@ -1,5 +1,6 @@
 from game_object import GameObject
 from sprite_tools import *
+from enemy import Enemy
 import random
 from constants import *
 
@@ -25,6 +26,7 @@ class Map(object):
                     Wall(game, x, y)
                 else:
                     Tile(game, x, y)
+        self.populate_enemies(game)
 
 
     def populate_wall(self, game):
@@ -66,8 +68,15 @@ class Map(object):
                             if not self.get((x1, y1)):
                                 Tile(game, x1, y1)
         self.populate_random(game, 0.9)
-                
+
         
+    def populate_enemies(self, game, difficulty=1):
+        for x in range(1, len(self.cells)-1):
+            for y in range(1, len(self.cells[0])-1):
+                if not self.get((x,y), "blocking"):
+                    if random.random() < .05:
+                        Enemy(game, x, y)
+    
 
     def add_to_cell(self, new_item, pos):
 
