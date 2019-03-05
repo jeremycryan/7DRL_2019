@@ -18,11 +18,11 @@ class Game(object):
         self.map = Map((30, 30))
         self.map.populate_random(self)
         self.movers = []
-        self.player = Player(self, 0, 0)
+        self.player = Player(self, 1, 1)
         self.terminal = Terminal(self)
         Enemy(self, 5, 5)
         self.camera = Camera()
-        self.executables = { "mv s": lambda: self.player.translate(0, 1),
+        self.executables = {"mv s": lambda: self.player.translate(0, 1),
                             "mv a": lambda: self.player.translate(-1, 0), 
                             "mv d": lambda: self.player.translate(1, 0),
                             "mv w": lambda: self.player.translate(0, -1),

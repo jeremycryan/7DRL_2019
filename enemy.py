@@ -6,7 +6,7 @@ class Enemy(GameObject):
 
     def __init__(self, game, x, y, delay=4.0, behavior=ai.approach_player_smart, hp = 1):
         GameObject.__init__(self, game, x, y, layer=4)
-        idle = SpriteSheet("bug.png", (2, 1), 2);
+        idle = SpriteSheet("bug.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
         self.behavior = behavior

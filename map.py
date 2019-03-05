@@ -15,14 +15,32 @@ class Map(object):
 
 
     def populate_random(self, game):
-
+        xmax = len(self.cells)
+        ymax = len(self.cells[0])
+        for x in range(xmax):
+            Wall(game, x, 0)
+            Wall(game, x, ymax-1)
+        for y in range(ymax):
+            Wall(game, 0, y)
+            Wall(game, xmax-1, y)
         for x in range(len(self.cells)):
             for y in range(len(self.cells[0])):
                 if random.random() < 0.2:
-                    self.add_to_cell(Wall(game, x, y), (x, y))
+                    Wall(game, x, y)
                 else:
-                    self.add_to_cell(Tile(game, x, y), (x, y))
+                    Tile(game, x, y)
 
+
+    def populate_rooms(self, game):
+        xmax = len(self.cells)
+        ymax = len(self.cells[0])
+        for x in range(xmax):
+            Wall(game, x, 0)
+            Wall(game, x, ymax-1)
+        for y in range(ymax):
+            Wall(game, 0, y)
+            Wall(game, xmax-1, y)
+            
 
     def add_to_cell(self, new_item, pos):
 
