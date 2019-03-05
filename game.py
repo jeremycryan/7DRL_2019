@@ -38,6 +38,7 @@ class Game(object):
 
         then = time.time()
         time.sleep(0.01)
+        self.camera.speed = 1.0 #   Change this for slow motion
 
         while True:
             # Game logic up here
@@ -58,7 +59,7 @@ class Game(object):
                 obj.update(dt)
             self.update_camera_target()
             #self.map.update(dt, (0, 30), (0, 30))
-            self.map.draw(self.screen, (0, 16), (0, 12))
+            self.map.draw(self.screen, (0, 10), (0, 13))
             #self.player.draw(self.screen)
             self.terminal.draw(self.screen)
             self.update_screen()
@@ -147,15 +148,17 @@ class Camera(object):
         self.target_x = 0
         self.target_y = 0
 
+        self.speed = 1.0
+
     def update(self, dt):
         
         dx = self.target_x - self.x
         dy = self.target_y - self.y
 
-        self.x += dx * dt * 2
-        self.y += dy * dt * 2
+        self.x += dx * dt * 3
+        self.y += dy * dt * 3
 
-        return dt
+        return dt * self.speed
                 
 
 if __name__=="__main__":
