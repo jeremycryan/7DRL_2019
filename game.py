@@ -20,6 +20,7 @@ class Game(object):
         self.player = Player(self, 0, 0)
         self.terminal = Terminal(self)
         Enemy(self, 5, 5)
+        self.camera = Camera()
         self.executables = { "mv s": lambda: self.player.translate(0, 1),
                             "mv a": lambda: self.player.translate(-1, 0), 
                             "mv d": lambda: self.player.translate(1, 0),
@@ -43,11 +44,16 @@ class Game(object):
             now = time.time()
             dt = now - then
             then = now
+
+            self.update_camera_target()
+            dt = self.camera.update(dt)
             
             events = pygame.event.get()
             self.terminal.update_value(events)
 
             # Drawing goes here
+            # TODO remove fill functions once screen is completely filled with tiles
+            self.screen_blit.fill((50, 50, 50))
             self.screen.fill((50, 50, 50))
             for obj in self.movers:
                 obj.update(dt)
@@ -58,6 +64,11 @@ class Game(object):
             self.update_screen()
             self.draw_commands(self.screen_blit)
             pygame.display.flip()
+
+
+    def update_camera_target(self):
+        self.camera.target_x = self.player.x * TILE_SIZE - (WINDOW_WIDTH)/2
+        self.camera.target_y = self.player.y * TILE_SIZE - (WINDOW_HEIGHT)/2
 
 
     def draw_commands(self, surf):
@@ -130,7 +141,21 @@ class Camera(object):
 
     def __init__(self):
 
-        pass
+        self.x = 0
+        self.y = 0
+
+        self.target_x = 0
+        self.target_y = 0
+
+    def update(self, dt):
+        
+        dx = self.target_x - self.x
+        dy = self.target_y - self.y
+
+        self.x += dx * dt * 5
+        self.y += dy * dt * 5
+
+        return dt
                 
 
 if __name__=="__main__":
