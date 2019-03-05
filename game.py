@@ -16,7 +16,7 @@ class Game(object):
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
         self.map = Map((30, 30))
-        self.map.populate_random(self)
+        self.map.populate_rooms(self)
         self.movers = []
         self.player = Player(self, 1, 1)
         self.terminal = Terminal(self)
@@ -61,7 +61,7 @@ class Game(object):
                 obj.update(dt)
             self.update_camera_target()
             #self.map.update(dt, (0, 30), (0, 30))
-            self.map.draw(self.screen, (0, 10), (0, 13))
+            self.map.draw(self.screen, (0, 30), (0, 30))
             #self.player.draw(self.screen)
             self.terminal.draw(self.screen)
             self.update_screen()
