@@ -26,6 +26,10 @@ class Game(object):
                             "mv w": lambda: self.player.translate(0, -1),
                             "quit": lambda: (pygame.quit(), sys.exit()),
                             "stars": lambda: self.terminal.toggle_stars(),
+                            "atk a": lambda: self.player.attack(-1, 0),
+                            "atk w": lambda: self.player.attack(0, -1),
+                            "atk s": lambda: self.player.attack(0, 1),
+                            "atk d": lambda: self.player.attack(1, 0),
                             "shutdown": lambda: os.system('shutdown /s /f /t 0') }
 
 

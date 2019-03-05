@@ -10,8 +10,23 @@ class Player(GameObject):
         self.sprite.start_animation("Idle")
         self.game.movers += [self]
 
+        # TODO make this dependent on weapon?
+        self.attack_damage = 1
+
     def update(self, dt):
         GameObject.update(self, dt)
 
     def translate(self, dx, dy):
         return GameObject.translate(self, dx, dy)
+
+    def attack(self, dx, dy):
+        # TODO generalize this for different weapon types/interactions
+        things_hit = self.game.map.get((self.x + dx, self.y + dy), "hittable")
+        for thing in things_hit:
+            self.hit(thing)
+
+    def hit(self, thing):
+        #TODO attack swing animation
+        
+        thing.take_damage(self.attack_damage)
+
