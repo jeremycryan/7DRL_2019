@@ -18,14 +18,19 @@ class GameObject(object):
         self.sprite.y_pos = self.y * TILE_SIZE
 
     def update(self, dt):
-        targ_x = self.x * TILE_SIZE - self.game.camera.x
-        targ_y = self.y * TILE_SIZE - self.game.camera.y
+        targ_x = self.x * TILE_SIZE
+        targ_y = self.y * TILE_SIZE
         self.sprite.x_pos += (targ_x - self.sprite.x_pos)*dt*20
         self.sprite.y_pos += (targ_y - self.sprite.y_pos)*dt*20
         self.sprite.update(dt)
 
     def draw(self, surf):
+        self.sprite.x_pos -= int(self.game.camera.x)
+        self.sprite.y_pos -= int(self.game.camera.y)
         self.sprite.draw(surf, self.flipped)
+        self.sprite.x_pos += int(self.game.camera.x)
+        self.sprite.y_pos += int(self.game.camera.y)
+
 
     def translate(self, dx, dy):
         if self.collide(self.x+dx, self.y+dy):

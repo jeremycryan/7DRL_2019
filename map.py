@@ -78,11 +78,7 @@ class Tile(GameObject):
         self.static = True
 
     def draw(self, surf):
-        self.sprite.x_pos -= int(self.game.camera.x)
-        self.sprite.y_pos -= int(self.game.camera.y)
         GameObject.draw(self, surf)
-        self.sprite.x_pos += int(self.game.camera.x)
-        self.sprite.y_pos += int(self.game.camera.y)
 
 class Wall(Tile):
 

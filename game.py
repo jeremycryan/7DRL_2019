@@ -45,7 +45,6 @@ class Game(object):
             dt = now - then
             then = now
 
-            self.update_camera_target()
             dt = self.camera.update(dt)
             
             events = pygame.event.get()
@@ -57,8 +56,9 @@ class Game(object):
             self.screen.fill((50, 50, 50))
             for obj in self.movers:
                 obj.update(dt)
+            self.update_camera_target()
             #self.map.update(dt, (0, 30), (0, 30))
-            self.map.draw(self.screen, (0, 30), (0, 30))
+            self.map.draw(self.screen, (0, 16), (0, 12))
             #self.player.draw(self.screen)
             self.terminal.draw(self.screen)
             self.update_screen()
@@ -67,8 +67,8 @@ class Game(object):
 
 
     def update_camera_target(self):
-        self.camera.target_x = self.player.x * TILE_SIZE - (WINDOW_WIDTH)/2
-        self.camera.target_y = self.player.y * TILE_SIZE - (WINDOW_HEIGHT)/2
+        self.camera.target_x = self.player.sprite.x_pos - (WINDOW_WIDTH)/2
+        self.camera.target_y = self.player.sprite.y_pos - (WINDOW_HEIGHT)/2
 
 
     def draw_commands(self, surf):
@@ -152,8 +152,8 @@ class Camera(object):
         dx = self.target_x - self.x
         dy = self.target_y - self.y
 
-        self.x += dx * dt * 5
-        self.y += dy * dt * 5
+        self.x += dx * dt * 2
+        self.y += dy * dt * 2
 
         return dt
                 

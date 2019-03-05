@@ -15,6 +15,7 @@ class Player(GameObject):
 
     def update(self, dt):
         GameObject.update(self, dt)
+        print(self.sprite.x_pos, self.sprite.y_pos)
 
     def translate(self, dx, dy):
         return GameObject.translate(self, dx, dy)

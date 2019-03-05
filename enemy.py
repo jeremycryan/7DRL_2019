@@ -41,8 +41,8 @@ class Enemy(GameObject):
         GameObject.draw(self, surf)
 
     def update_meter_pos(self):
-        self.meter_sprite.x_pos = self.sprite.x_pos + 5
-        self.meter_sprite.y_pos = self.sprite.y_pos - 1
+        self.meter_sprite.x_pos = self.sprite.x_pos + 5 - self.game.camera.x
+        self.meter_sprite.y_pos = self.sprite.y_pos - 1 - self.game.camera.y
         
     def translate(self, dx, dy):
         players = self.map.get((self.x+dx, self.y+dy), ("layer", 5))
