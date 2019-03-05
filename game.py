@@ -82,15 +82,17 @@ class Game(object):
 
 
     def draw_commands(self, surf):
-        for i, key in enumerate([key for key in self.executables]):
+        commands = [key for key in self.executables]
+        commands.sort()
+        for i, key in enumerate(commands):
             if not key in self.command_renders:
                 self.generate_command_surface(key)
 
             font_render = self.command_renders[key]
             back_square = self.command_rectangles[key]
 
-            surf.blit(back_square, (0, i*(font_render.get_height())))
-            surf.blit(font_render, (0, i*(font_render.get_height())))
+            surf.blit(back_square, (0, i*(font_render.get_height()+2)))
+            surf.blit(font_render, (0, i*(font_render.get_height()+2)))
 
 
     def generate_command_surface(self, text):
@@ -108,8 +110,8 @@ class Game(object):
 
     def draw_fps(self, dt):
         self.dts.append(dt)
-        if len(self.dts) > 50:
-            self.dts = self.dts[-50:]
+        if len(self.dts) > 300:
+            self.dts = self.dts[-300:]
         dt_avg = sum(self.dts)*1.0/len(self.dts)
         fps = int(1/dt_avg)
         fonty_obj = self.terminal.font.render("FPS: " + str(fps), 0, (255, 255, 255))

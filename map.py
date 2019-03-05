@@ -1,6 +1,7 @@
 from game_object import GameObject
 from sprite_tools import *
 import random
+from constants import *
 
 class Map(object):
 
@@ -80,10 +81,20 @@ class Map(object):
         return return_list
 
     def draw(self, surf, xlim, ylim):
+
+        # Draw all tile and detail tiles first
         for x in [i + xlim[0] for i in range(xlim[1] - xlim[0])]:
             for y in [j + ylim[0] for j in range(ylim[1] - ylim[0])]:
                 for item in self.get((y, x)):
-                    item.draw(surf)
+                    if item.layer in [FLOOR_LAYER, FLOOR_DETAIL_LAYER]:
+                        item.draw(surf)
+
+        # Then draw enemies, players, items, etc
+        for x in [i + xlim[0] for i in range(xlim[1] - xlim[0])]:
+            for y in [j + ylim[0] for j in range(ylim[1] - ylim[0])]:
+                for item in self.get((y, x)):
+                    if not item.layer in [FLOOR_LAYER, FLOOR_DETAIL_LAYER]:
+                        item.draw(surf)
 
 
 class Tile(GameObject):
