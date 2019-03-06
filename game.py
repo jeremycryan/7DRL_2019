@@ -61,7 +61,7 @@ class Game(object):
 
             # Drawing goes here
             # TODO remove fill functions once screen is completely filled with tiles
-            self.screen.fill((50, 50, 50))
+            self.screen.fill((0, 0, 0))
             for obj in self.movers:
                 obj.update(dt)
             self.update_camera_target()
@@ -151,6 +151,18 @@ class Terminal(object):
         self.star_mode(1 - self.stars)
 
     def update_value(self, events):
+
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    self.game.player.translate(0, -1)
+                elif event.key == pygame.K_DOWN:
+                    self.game.player.translate(0, 1)
+                elif event.key == pygame.K_LEFT:
+                    self.game.player.translate(-1, 0)
+                elif event.key == pygame.K_RIGHT:
+                    self.game.player.translate(1, 0)
+
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key in KEYDICT:
@@ -160,6 +172,11 @@ class Terminal(object):
                 elif event.key == pygame.K_RETURN:
                     self.execute()
         if self.text == " ": self.text = ""
+        self.update_text_render()
+
+
+    def append_to_text(self, text):
+        self.text += text
         self.update_text_render()
 
 
