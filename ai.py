@@ -13,6 +13,19 @@ def move_random(enemy):
         if enemy.translate(*d):
             return
 
+
+def move_random_or_screech(enemy):
+    if enemy.moved_last_turn:
+        enemy.moved_last_turn = False
+        enemy.game.terminal.append_to_text("e")
+    else:
+        enemy.moved_last_turn = True
+        random.shuffle(directions)
+        for d in directions:
+            if enemy.translate(*d):
+                return
+
+
 def approach_player(enemy):
     dx = enemy.game.player.x - enemy.x
     dy = enemy.game.player.y - enemy.y

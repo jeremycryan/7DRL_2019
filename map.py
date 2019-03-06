@@ -109,7 +109,9 @@ class Tile(GameObject):
 
     def __init__(self, game, x, y, fps=4):
         GameObject.__init__(self, game, x, y, layer=0, fps=fps)
-        static = SpriteSheet("default_tile.png", (1, 1), 1)
+        self.layer = FLOOR_LAYER
+        sprite_paths = [("default_tile" + str(a) + ".png") for a in ["", 0, 1, 2, 3, 4]]
+        static = SpriteSheet(random.choice(sprite_paths), (1, 1), 1)
         self.sprite.add_animation({"Static": static})
         self.sprite.start_animation("Static")
         self.static = True
@@ -121,7 +123,7 @@ class Wall(Tile):
 
     def __init__(self, game, x, y, fps=4):
         Tile.__init__(self, game, x, y, fps=fps)
-        self.layer = 2
+        self.layer = WALL_LAYER
         self.blocking = True
         static = SpriteSheet("wall_tile.png", (1, 1), 1)
         self.sprite.add_animation({"Static": static})

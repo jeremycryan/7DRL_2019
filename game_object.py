@@ -31,19 +31,15 @@ class GameObject(object):
         self.sprite.update(dt)
 
     def draw(self, surf):
-        self.sprite.x_pos -= int(self.game.camera.get_x())
-        self.sprite.y_pos -= int(self.game.camera.get_y())
         rebound = self.get_rebound()
         hop = self.get_hop()
-        self.sprite.x_pos -= rebound[0]
-        self.sprite.y_pos -= rebound[1]
-        self.sprite.y_pos -= hop
+        xoff = int(self.game.camera.get_x() + rebound[0])
+        yoff = int(self.game.camera.get_y() + rebound[1] + hop)
+        self.sprite.x_pos -= xoff
+        self.sprite.y_pos -= yoff
         self.sprite.draw(surf, self.flipped)
-        self.sprite.y_pos += hop
-        self.sprite.x_pos += rebound[0]
-        self.sprite.y_pos += rebound[1]
-        self.sprite.x_pos += int(self.game.camera.get_x())
-        self.sprite.y_pos += int(self.game.camera.get_y())
+        self.sprite.y_pos += yoff
+        self.sprite.x_pos += xoff
 
     def translate(self, dx, dy):
         if self.collide(self.x+dx, self.y+dy):

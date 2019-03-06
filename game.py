@@ -15,9 +15,9 @@ class Game(object):
         pygame.init()
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
+        self.movers = []
         self.map = Map((30, 30))
         self.map.populate_random(self)
-        self.movers = []
         self.player = Player(self, 2, 2)
         self.terminal = Terminal(self)
         Enemy(self, 5, 5)
@@ -223,12 +223,14 @@ class Camera(object):
                 (self.y + WINDOW_HEIGHT/2)//TILE_SIZE)
 
     def shake(self, amplitude = 1.0):
-        self.shake_amp = self.shake_max_amp * amplitude
+        self.shake_amp += self.shake_max_amp * amplitude
 
     def get_x(self):
         return self.x
 
     def get_y(self):
+        if self.shake_amp < 1:
+            return self.y
         return self.y + sin(self.shake_freq * 2 * pi * self.t)*self.shake_amp
                 
 
