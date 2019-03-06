@@ -64,11 +64,6 @@ class Enemy(GameObject):
         if self.hp <= 0:
             self.die()
 
-    def collide(self, x, y):
-        collisions = self.map.get((x, y), "blocking")
-        occupants = self.map.get((x, y), ("layer", 4))
-        return collisions or occupants
-
     def hit(self, player):
         self.reboundx = player.x - self.x
         self.reboundy = player.y - self.y

@@ -17,6 +17,12 @@ class Player(GameObject):
         GameObject.update(self, dt)
 
     def translate(self, dx, dy):
+        enemies = self.map.get((self.x+dx, self.y+dy), ("layer", 4))
+        if enemies:
+            self.hit(enemies[0])
+            if abs(dx) > 0:
+                self.flipped = dx < 0
+            return True
         return GameObject.translate(self, dx, dy)
 
     def attack(self, dx, dy):
@@ -29,4 +35,5 @@ class Player(GameObject):
         #TODO attack swing animation
         
         thing.take_damage(self.attack_damage)
+
 
