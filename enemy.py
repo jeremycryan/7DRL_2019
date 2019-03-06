@@ -20,7 +20,7 @@ class Enemy(GameObject):
         self.meter_sprite = Sprite(fps = 11.0/delay)
         self.meter_sprite.add_animation({"Default": meter})
         self.meter_sprite.start_animation("Default")
-        self.update_meter_pos
+        self.update_meter_pos()
 
         self.hp = hp
         self.enemy = True
@@ -32,7 +32,7 @@ class Enemy(GameObject):
         self.prop_to_move = self.timer/self.delay
         if self.timer >= self.delay:
             self.behavior(self)
-            self.timer -= self.delay
+            self.timer = 0
             self.meter_sprite.start_animation("Default")
         self.update_meter_pos()
         self.meter_sprite.update(dt)

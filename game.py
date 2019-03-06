@@ -16,13 +16,13 @@ class Game(object):
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
         self.movers = []
+        self.camera = Camera()
         self.map = Map((30, 30))
         self.map.populate_rooms(self)
-        self.player = Player(self, 2, 2)
         self.terminal = Terminal(self)
-        Ebat(self, 5, 5)
-        self.camera = Camera()
 
+        self.player = Player(self, 2, 2)
+        Ebat(self, 5, 5)
         self.command_font = pygame.font.SysFont("monospace", 16)
 
         self.executables = { "mv s": lambda: self.player.translate(0, 1),
