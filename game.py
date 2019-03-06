@@ -7,7 +7,7 @@ from sprite_tools import *
 from constants import *
 from map import Map
 from player import Player
-from enemy import Enemy
+from enemy import *
 
 class Game(object):
 
@@ -17,10 +17,10 @@ class Game(object):
         self.screen = pygame.Surface(WINDOW_SIZE)
         self.movers = []
         self.map = Map((30, 30))
-        self.map.populate_random(self)
+        self.map.populate_rooms(self)
         self.player = Player(self, 2, 2)
         self.terminal = Terminal(self)
-        Enemy(self, 5, 5)
+        Ebat(self, 5, 5)
         self.camera = Camera()
         
         self.command_font = pygame.font.SysFont("monospace", 16)

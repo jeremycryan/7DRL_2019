@@ -1,6 +1,7 @@
 from game_object import GameObject
 from sprite_tools import *
 import random
+from enemy import Enemy
 from constants import *
 
 class Map(object):
@@ -17,24 +18,20 @@ class Map(object):
                 self.cells[i].append([])
 
 
-    def populate_random(self, game):
-        xmax = len(self.cells)
-        ymax = len(self.cells[0])
-        for x in range(xmax):
-            Wall(game, x, 0)
-            Wall(game, x, ymax-1)
-        for y in range(ymax):
-            Wall(game, 0, y)
-            Wall(game, xmax-1, y)
-        for x in range(len(self.cells)):
-            for y in range(len(self.cells[0])):
-                if random.random() < 0.2:
+    def populate_random(self, game, wall_ratio=0.2):
+        self.populate_wall(game)
+        for x in range(1, len(self.cells)-1):
+            for y in range(1, len(self.cells[0])-1):
+                if self.get((x,y)):
+                    continue
+                if random.random() < wall_ratio:
                     Wall(game, x, y)
                 else:
                     Tile(game, x, y)
+        self.populate_enemies(game)
 
 
-    def populate_rooms(self, game):
+    def populate_wall(self, game):
         xmax = len(self.cells)
         ymax = len(self.cells[0])
         for x in range(xmax):
@@ -43,10 +40,47 @@ class Map(object):
         for y in range(ymax):
             Wall(game, 0, y)
             Wall(game, xmax-1, y)
-            
+        for x in range(1, 4):
+            for y in range(1, 4):
+                Tile(game, x, y)
+
+
+    def populate_rooms(self, game):
+        self.populate_wall(game)
+        xmax = len(self.cells)-1
+        ymax = len(self.cells[0])-1
+        SEED_DENSITY = 0.1
+        ROOM_MIN_SIZE = 3
+        ROOM_MAX_SIZE = 4
+        for i in range(int(SEED_DENSITY*xmax*ymax)):
+            x = random.randint(-int(ROOM_MIN_SIZE/2), xmax-1)
+            y = random.randint(-int(ROOM_MIN_SIZE/2), ymax-1)
+            w = random.randint(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+            h = random.randint(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+            if random.randint(0,1):
+                w += 1
+                h -= 1
+            else:
+                h += 1
+                w -= 1
+            for x1 in range(x, x+w):
+                if x1 >= 1 and x1 < xmax:
+                    for y1 in range(y, y+h):
+                        if y1 >= 1 and y1 < ymax:
+                            if not self.get((x1, y1)):
+                                Tile(game, x1, y1)
+        self.populate_random(game, 0.9)
+    
+
+    def populate_enemies(self, game, difficulty=1):
+        for x in range(1, len(self.cells)-1):
+            for y in range(1, len(self.cells[0])-1):
+                if not self.get((x,y), "blocking"):
+                    if random.random() < .05:
+                        Enemy(game, x, y)
+
 
     def add_to_cell(self, new_item, pos):
-
         self.cells[pos[0]][pos[1]].append(new_item)
         self.sort_cell(pos)
 
