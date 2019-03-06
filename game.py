@@ -22,11 +22,11 @@ class Game(object):
         self.terminal = Terminal(self)
         Ebat(self, 5, 5)
         self.camera = Camera()
-        
+
         self.command_font = pygame.font.SysFont("monospace", 16)
-        
+
         self.executables = { "mv s": lambda: self.player.translate(0, 1),
-                            "mv a": lambda: self.player.translate(-1, 0), 
+                            "mv a": lambda: self.player.translate(-1, 0),
                             "mv d": lambda: self.player.translate(1, 0),
                             "mv w": lambda: self.player.translate(0, -1),
                             "quit": lambda: (pygame.quit(), sys.exit()),
@@ -55,7 +55,7 @@ class Game(object):
             then = now
 
             dt = self.camera.update(real_dt)
-            
+
             events = pygame.event.get()
             self.terminal.update_value(events)
 
@@ -153,6 +153,9 @@ class Terminal(object):
     def update_value(self, events):
 
         for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     self.game.player.translate(0, -1)
@@ -195,7 +198,7 @@ class Terminal(object):
             self.game.executables[self.text]()
         except KeyError:
             pass
-        
+
         self.text = ""
 
 
@@ -223,7 +226,7 @@ class Camera(object):
     def update(self, dt):
 
         self.t += dt
-        
+
         dx = self.target_x - self.x
         dy = self.target_y - self.y
 
@@ -249,7 +252,7 @@ class Camera(object):
         if self.shake_amp < 1:
             return self.y
         return self.y + sin(self.shake_freq * 2 * pi * self.t)*self.shake_amp
-                
+
 
 if __name__=="__main__":
 
