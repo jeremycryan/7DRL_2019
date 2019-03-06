@@ -70,7 +70,7 @@ class Map(object):
                             if not self.get((x1, y1)):
                                 Tile(game, x1, y1)
         self.populate_random(game, 0.9)
-    
+
 
     def populate_enemies(self, game, difficulty=1):
         for x in range(1, len(self.cells)-1):
@@ -100,7 +100,7 @@ class Map(object):
 
         map.get((0, 1), ("layer", 3), ("hidden", 0), "blocking")
         """
-        
+
         things_at_pos = self.cells[pos[0]][pos[1]]
         return_list = []
         for thing in things_at_pos:
@@ -121,8 +121,8 @@ class Map(object):
         ## Limit bounds if off map
         if xlim[0] < 0: xlim = (0, xlim[1])
         if ylim[0] < 0: ylim = (0, ylim[1])
-        if xlim[1] > self.size[1] - 1: xlim = (xlim[0], self.size[1] - 1)
-        if ylim[1] > self.size[0] - 1: ylim = (ylim[0], self.size[0] - 1)
+        if xlim[1] > self.size[1]: xlim = (xlim[0], self.size[1])
+        if ylim[1] > self.size[0]: ylim = (ylim[0], self.size[0])
 
         # Draw all tile and detail tiles first
         for x in [i + xlim[0] for i in range(xlim[1] - xlim[0])]:
@@ -163,7 +163,7 @@ class Wall(Tile):
         self.sprite.add_animation({"Static": static})
         self.sprite.start_animation("Static")
         self.static = True
-    
+
 
 
 if __name__=="__main__":
@@ -173,4 +173,3 @@ if __name__=="__main__":
     a.hidden = True
 
     m.add_to_cell(a, (3, 3))
-
