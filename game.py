@@ -61,13 +61,12 @@ class Game(object):
 
             # Drawing goes here
             # TODO remove fill functions once screen is completely filled with tiles
-            self.screen_blit.fill((50, 50, 50))
             self.screen.fill((50, 50, 50))
             for obj in self.movers:
                 obj.update(dt)
             self.update_camera_target()
             #self.map.update(dt, (0, 30), (0, 30))
-            self.map.draw(self.screen, (0, 10), (0, 13))
+            self.draw_map()
             #self.player.draw(self.screen)
             self.terminal.draw(self.screen)
             self.update_screen()
@@ -76,9 +75,17 @@ class Game(object):
             pygame.display.flip()
 
 
+    def draw_map(self):
+        x_center, y_center = self.camera.center_tile_pos()
+        x_girth, y_girth = 8, 6
+        xlim = (int(x_center - x_girth), int(x_center + x_girth))
+        ylim = (int(y_center - y_girth), int(y_center + y_girth))
+        self.map.draw(self.screen, ylim, xlim)
+
+
     def update_camera_target(self):
-        self.camera.target_x = self.player.sprite.x_pos - (WINDOW_WIDTH)/2
-        self.camera.target_y = self.player.sprite.y_pos - (WINDOW_HEIGHT)/2
+        self.camera.target_x = self.player.sprite.x_pos - (WINDOW_WIDTH)/2 + TILE_SIZE/2
+        self.camera.target_y = self.player.sprite.y_pos - (WINDOW_HEIGHT)/2 + TILE_SIZE/2
 
 
     def draw_commands(self, surf):
@@ -209,6 +216,11 @@ class Camera(object):
         self.shake_amp = max(0, self.shake_amp - self.shake_decay * dt * self.shake_max_amp)
 
         return dt * self.speed
+
+    def center_tile_pos(self):
+
+        return ((self.x + WINDOW_WIDTH/2)//TILE_SIZE,
+                (self.y + WINDOW_HEIGHT/2)//TILE_SIZE)
 
     def shake(self, amplitude = 1.0):
         self.shake_amp = self.shake_max_amp * amplitude

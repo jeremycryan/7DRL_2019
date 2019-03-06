@@ -9,6 +9,8 @@ class Map(object):
 
         self.cells = []
 
+        self.size = size
+
         for i in range(size[0]):
             self.cells.append([])
             for j in range(size[1]):
@@ -81,6 +83,12 @@ class Map(object):
         return return_list
 
     def draw(self, surf, xlim, ylim):
+
+        ## Limit bounds if off map
+        if xlim[0] < 0: xlim = (0, xlim[1])
+        if ylim[0] < 0: ylim = (0, ylim[1])
+        if xlim[1] > self.size[1] - 1: xlim = (xlim[0], self.size[1] - 1)
+        if ylim[1] > self.size[0] - 1: ylim = (ylim[0], self.size[0] - 1)
 
         # Draw all tile and detail tiles first
         for x in [i + xlim[0] for i in range(xlim[1] - xlim[0])]:
