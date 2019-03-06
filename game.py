@@ -68,10 +68,10 @@ class Game(object):
             #self.map.update(dt, (0, 30), (0, 30))
             self.draw_map()
             #self.player.draw(self.screen)
-            self.terminal.draw(self.screen)
+            #self.terminal.draw(self.screen)
             self.update_screen()
             self.draw_fps(real_dt)   #   TODO remove from final build
-            self.draw_commands(self.screen_blit)
+            #self.draw_commands(self.screen_blit)
             pygame.display.flip()
 
 
