@@ -5,7 +5,7 @@ from sprite_tools import *
 
 class Enemy(GameObject):
 
-    def __init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp = 1):
+    def __init__(self, game, x, y, delay=1, hp = 1, behavior=ai.approach_player_smart):
         GameObject.__init__(self, game, x, y, layer=4)
         idle = SpriteSheet("bug.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
@@ -27,7 +27,7 @@ class Enemy(GameObject):
         else:
             self.countdown = self.delay
             if self.behavior(self):
-                self.game.delay += 0.1
+                self.game.delay += 0
 
     def draw(self, surf):
         GameObject.draw(self, surf)
@@ -60,9 +60,16 @@ class Enemy(GameObject):
 class Ebat(Enemy):
 
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=3.0, behavior=ai.move_random_or_screech, hp = 1)
+        Enemy.__init__(self, game, x, y, delay=1, behavior=ai.move_random, hp = 1)
         idle = SpriteSheet("ebat.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
+
+class Bit(Enemy):
+
+    def __init__(self, game, x, y):
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.charge_player, hp = 1)
+        idle = SpriteSheet("bit.png", (2, 1), 2)
+        self.sprite.add_animation({"Idle": idle})
+        self.sprite.start_animation("Idle")
     
-        self.moved_last_turn = False  
