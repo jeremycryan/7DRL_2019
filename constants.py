@@ -54,8 +54,4 @@ KEYDICT = {pygame.K_a: "a",
            pygame.K_x: "x",
            pygame.K_y: "y",
            pygame.K_z: "z",
-           pygame.K_SPACE: " ",
-           pygame.K_UP: "^",
-           pygame.K_LEFT: "<",
-           pygame.K_RIGHT: ">",
-           pygame.K_DOWN: "V"}
+           pygame.K_SPACE: " "}
