@@ -77,7 +77,7 @@ class Map(object):
             for y in range(1, len(self.cells[0])-1):
                 if not self.get((x,y), "blocking"):
                     if random.random() < .05:
-                        Bug(game, x, y)
+                        random.choice([Ebat(game, x, y), Bug(game, x, y)])
 
 
     def add_to_cell(self, new_item, pos):
