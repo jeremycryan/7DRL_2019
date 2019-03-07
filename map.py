@@ -1,7 +1,7 @@
 from game_object import GameObject
 from sprite_tools import *
 import random
-from enemy import Enemy
+from enemy import *
 from constants import *
 
 class Map(object):
@@ -77,7 +77,7 @@ class Map(object):
             for y in range(1, len(self.cells[0])-1):
                 if not self.get((x,y), "blocking"):
                     if random.random() < .05:
-                        Enemy(game, x, y)
+                        Bug(game, x, y)
 
 
     def add_to_cell(self, new_item, pos):

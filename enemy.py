@@ -57,12 +57,37 @@ class Enemy(GameObject):
         self.game.camera.shake()
         print("Oof!")
 
+
+class Bug(Enemy):
+    
+    def __init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp = 1):
+        Enemy.__init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp = 1)
+        readied = SpriteSheet("bug_readied.png", (2, 1), 2)
+        self.sprite.add_animation({"Readied": readied})
+
+    def move(self):
+        Enemy.move(self)
+        if self.countdown == 0:
+            self.sprite.start_animation("Readied")
+        else:
+            self.sprite.start_animation("Idle")
+
+        
+    
+
 class Ebat(Enemy):
 
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=3.0, behavior=ai.move_random_or_screech, hp = 1)
+        Enemy.__init__(self, game, x, y, delay=1.0, behavior=ai.move_random, hp = 1)
         idle = SpriteSheet("ebat.png", (2, 1), 2)
-        self.sprite.add_animation({"Idle": idle})
+        readied = SpriteSheet("ebat_readied.png", (2, 1), 2)
+        self.sprite.add_animation({"Idle": idle, "Readied": readied})
         self.sprite.start_animation("Idle")
-    
-        self.moved_last_turn = False  
+        
+
+    def move(self):
+        Enemy.move(self)
+        if self.countdown == 0:
+            self.sprite.start_animation("Readied")
+        else:
+            self.sprite.start_animation("Idle")
