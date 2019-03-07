@@ -189,7 +189,8 @@ class Wall(Tile):
         Tile.__init__(self, game, x, y, fps=fps)
         self.layer = WALL_LAYER
         self.blocking = True
-        static = SpriteSheet("wall_tile.png", (1, 1), 1)
+        sprite_paths = [("wall_tile" + str(a) + ".png") for a in ["", 0, 1, 2]]
+        static = SpriteSheet(random.choice(sprite_paths), (1, 1), 1)
         self.sprite.add_animation({"Static": static})
         self.sprite.start_animation("Static")
         self.static = True
