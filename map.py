@@ -78,7 +78,7 @@ class Map(object):
                 if not self.get((x,y), "blocking"):
                     r = random.random()
                     if r < 0.02:
-                        Enemy(game, x, y)
+                        Bug(game, x, y)
                     elif r < 0.04:
                         Ebat(game, x, y)
                     elif r < 0.05:
