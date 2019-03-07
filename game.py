@@ -23,7 +23,6 @@ class Game(object):
         self.terminal = Terminal(self)
         self.delay = 0
         self.player = Player(self, 2, 2)
-        Ebat(self, 5, 5)
         self.turn_queue = []
         self.command_font = pygame.font.SysFont("monospace", 16)
 

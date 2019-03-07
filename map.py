@@ -76,8 +76,13 @@ class Map(object):
         for x in range(1, len(self.cells)-1):
             for y in range(1, len(self.cells[0])-1):
                 if not self.get((x,y), "blocking"):
-                    if random.random() < .05:
-                        random.choice([Ebat(game, x, y), Bug(game, x, y)])
+                    r = random.random()
+                    if r < 0.02:
+                        Bug(game, x, y)
+                    elif r < 0.04:
+                        Ebat(game, x, y)
+                    elif r < 0.05:
+                        Bit(game, x, y)
 
 
     def add_to_cell(self, new_item, pos):
@@ -149,7 +154,21 @@ class Map(object):
         if ylim[1] > self.size[0]: ylim = (ylim[0], self.size[0])
         return x >= xlim[0] and x < xlim[1] and y >= ylim[0] and y < ylim[1]
     
-    
+
+    def is_straight_path(self, pos1, pos2):
+        if pos1[0] == pos2[0]:
+            for y in range(min(pos1[1], pos2[1])+1, max(pos1[1], pos2[1])):
+                if self.get((pos1[0], y), "blocking"):
+                    return False
+        elif pos1[1] == pos2[1]:
+            for x in range(min(pos1[0], pos2[0])+1, max(pos1[0], pos2[0])):
+                if self.get((x, pos1[1]), "blocking"):
+                    return False
+        else:
+            return False
+        return True
+
+
 class Tile(GameObject):
 
     def __init__(self, game, x, y, fps=4):
