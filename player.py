@@ -13,58 +13,32 @@ class Player(GameObject):
 
         # TODO make this dependent on weapon?
         self.attack_damage = 1
-        self.delay = PLAYER_DELAY
-        self.timer = self.delay
-        meter = SpriteSheet("bars.png", (11, 1), 11)
-        self.meter_sprite = Sprite(fps = 11.0/self.delay)
-        self.meter_sprite.add_animation({"Default": meter})
-        self.meter_sprite.start_animation("Default")
-        self.update_meter_pos()
 
     def update(self, dt):
         GameObject.update(self, dt)
-        self.timer += dt
-        self.prop_to_move = self.timer/self.delay
-        if self.timer >= self.delay:
-            self.timer = self.delay
-        else:
-            self.meter_sprite.update(dt)
-        self.update_meter_pos()
         
     def draw(self, surf):
-        self.meter_sprite.draw(surf)
         GameObject.draw(self, surf)
         
-    def translate(self, dx, dy, push=False):
-        if not push:
-            if not self.ready():
-                return False
-            self.meter_sprite.start_animation("Default")
-            self.timer = 0
-        enemies = self.map.get((self.x+dx, self.y+dy), ("layer", 4))
-        # TODO: Being pushed into enemies
-        if enemies:
-            self.hit(enemies[0])
-            if abs(dx) > 0:
-                self.flipped = dx < 0
-            return True
+    def translate(self, dx, dy, attack=True):
+        if attack and self.attack(dx, dy):
+            return True # Able to hit enemy
+        if self.map.get((self.x+dx, self.y+dy), ("layer", 4)):
+            return False # Enemy blocking square
         return GameObject.translate(self, dx, dy)
 
     def attack(self, dx, dy):
         # TODO generalize this for different weapon types/interactions
         things_hit = self.game.map.get((self.x + dx, self.y + dy), "hittable")
+        if len(things_hit) and abs(dx) > 0:
+            self.flipped = dx < 0
         for thing in things_hit:
             self.hit(thing)
+        return len(things_hit)
 
     def hit(self, thing):
         #TODO attack swing animation
         
         thing.take_damage(self.attack_damage)
 
-    def update_meter_pos(self):
-        self.meter_sprite.x_pos = self.sprite.x_pos + 4 - self.game.camera.x
-        self.meter_sprite.y_pos = self.sprite.y_pos - 7 - self.game.camera.y
-        
-    def ready(self):
-        return self.timer >= self.delay
 

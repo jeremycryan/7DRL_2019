@@ -11,19 +11,22 @@ def move_random(enemy):
     random.shuffle(directions)
     for d in directions:
         if enemy.translate(*d):
-            return
+            return True
+    return False
 
 
 def move_random_or_screech(enemy):
     if enemy.moved_last_turn:
         enemy.moved_last_turn = False
         enemy.game.terminal.append_to_text("e")
+        return True
     else:
         enemy.moved_last_turn = True
         random.shuffle(directions)
         for d in directions:
             if enemy.translate(*d):
-                return
+                return True
+    return False
 
 
 def approach_player(enemy):
@@ -42,14 +45,15 @@ def approach_player(enemy):
         order[3] = UP if dy>0 else DOWN
     for d in order:
         if enemy.translate(*d):
-            return
+            return True
+    return False
 
 def approach_player_smart(enemy):
     dx = enemy.game.player.x - enemy.x + enemy.vx
     dy = enemy.game.player.y - enemy.y + enemy.vy
     if abs(dx - enemy.vx) + abs(dy - enemy.vy) == 1:
         enemy.translate(dx - enemy.vx, dy - enemy.vy)
-        return
+        return True
     order = directions[:]
     if abs(dx) >= abs(dy):
         order[0] = RIGHT if dx>0 else LEFT
@@ -63,5 +67,6 @@ def approach_player_smart(enemy):
         order[3] = UP if dy>0 else DOWN
     for d in order:
         if enemy.translate(*d):
-            return
+            return True
+    return False
 

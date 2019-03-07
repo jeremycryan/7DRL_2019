@@ -20,12 +20,13 @@ class Game(object):
         self.map = Map((30, 30))
         self.map.populate_rooms(self)
         self.terminal = Terminal(self)
-
+        self.delay = 0
         self.player = Player(self, 2, 2)
         Ebat(self, 5, 5)
+        self.turn_queue = []
         self.command_font = pygame.font.SysFont("monospace", 16)
 
-        self.executables = { "mv s": lambda: self.player.translate(0, 1),
+        self.executables = {"mv s": lambda: self.player.translate(0, 1),
                             "mv a": lambda: self.player.translate(-1, 0),
                             "mv d": lambda: self.player.translate(1, 0),
                             "mv w": lambda: self.player.translate(0, -1),
@@ -59,6 +60,23 @@ class Game(object):
             events = pygame.event.get()
             self.terminal.update_value(events)
 
+            # Take turn
+            if self.delay > 0:
+                self.delay -= dt
+            elif len(self.turn_queue) == 0:
+                enemies = self.movers[:]
+                enemies.remove(self.player)
+                self.turn_queue = [self.player] + enemies
+            else:
+                mover = self.turn_queue[0]
+                if mover is self.player:
+                    pass
+                else:
+                    self.turn_queue.remove(mover)
+                    if self.map.on_screen(self.camera, mover.x, mover.y):
+                        if mover in self.movers:
+                            mover.move()
+            
             # Drawing goes here
             # TODO remove fill functions once screen is completely filled with tiles
             self.screen.fill((0, 0, 0))
@@ -77,9 +95,8 @@ class Game(object):
 
     def draw_map(self):
         x_center, y_center = self.camera.center_tile_pos()
-        x_girth, y_girth = 8, 6
-        xlim = (int(x_center - x_girth), int(x_center + x_girth))
-        ylim = (int(y_center - y_girth), int(y_center + y_girth))
+        xlim = (int(x_center - X_GIRTH), int(x_center + X_GIRTH))
+        ylim = (int(y_center - Y_GIRTH), int(y_center + Y_GIRTH))
         self.map.draw(self.screen, ylim, xlim)
 
 
@@ -125,6 +142,14 @@ class Game(object):
         self.screen_blit.blit(fonty_obj, (WINDOW_WIDTH*SCALE - 60, 10))
 
 
+    def move_player(self, dx, dy, end_turn=True):
+        if len(self.turn_queue) and self.turn_queue[0] is self.player:
+            self.player.translate(dx, dy)
+            self.delay += 0.05
+            if end_turn:
+                self.turn_queue.remove(self.player)
+
+
 class Terminal(object):
 
     def __init__(self, game):
@@ -158,13 +183,13 @@ class Terminal(object):
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    self.game.player.translate(0, -1)
+                    self.game.move_player(0, -1)
                 elif event.key == pygame.K_DOWN:
-                    self.game.player.translate(0, 1)
+                    self.game.move_player(0, 1)
                 elif event.key == pygame.K_LEFT:
-                    self.game.player.translate(-1, 0)
+                    self.game.move_player(-1, 0)
                 elif event.key == pygame.K_RIGHT:
-                    self.game.player.translate(1, 0)
+                    self.game.move_player(1, 0)
 
         for event in events:
             if event.type == pygame.KEYDOWN:

@@ -139,6 +139,17 @@ class Map(object):
                         item.draw(surf)
 
 
+    def on_screen(self, camera, x, y):
+        x_center, y_center = camera.center_tile_pos()
+        xlim = (int(x_center - X_GIRTH), int(x_center + X_GIRTH))
+        ylim = (int(y_center - Y_GIRTH), int(y_center + Y_GIRTH))
+        if xlim[0] < 0: xlim = (0, xlim[1])
+        if ylim[0] < 0: ylim = (0, ylim[1])
+        if xlim[1] > self.size[1]: xlim = (xlim[0], self.size[1])
+        if ylim[1] > self.size[0]: ylim = (ylim[0], self.size[0])
+        return x >= xlim[0] and x < xlim[1] and y >= ylim[0] and y < ylim[1]
+    
+    
 class Tile(GameObject):
 
     def __init__(self, game, x, y, fps=4):
