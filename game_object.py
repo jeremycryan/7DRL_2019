@@ -71,6 +71,57 @@ class GameObject(object):
     def get_hop(self):
         return -int(4*HOP*((abs(self.hop)-0.5)**2-0.25))
 
+
+class Slash(GameObject):
+
+    def __init__(self, game, x, y):
+        GameObject.__init__(self, game, x, y, FACE_MONKEY_LAYER, fps=12)
+        blank = SpriteSheet("empty.png", (1, 1), 1)
+        left = SpriteSheet("slash_left.png", (5, 1), 5)
+        right = SpriteSheet("slash_left.png", (5, 1), 5)
+        right.reverse(1, 0)
+        up = SpriteSheet("slash_up.png", (5, 1), 5)
+        down = SpriteSheet("slash_up.png", (5, 1), 5)
+        down.reverse(0, 1)
+        
+        for obj in [left, right, up, down]: obj.repeat = False
+        
+        self.sprite.add_animation({"Left": left,
+                                   "Right": right,
+                                   "Down": down,
+                                   "Up": up,
+                                   "Blank": blank})
+
+        self.sprite.start_animation("Blank")
+
+    def set_direction(self, direction):
+
+        if direction == LEFT:
+            self.sprite.start_animation("Left")
+        elif direction == RIGHT:
+            self.sprite.start_animation("Right")
+        elif direction == UP:
+            self.sprite.start_animation("Up")
+        elif direction == DOWN:
+            self.sprite.start_animation("Down")
+
+    def set_position(self, x, y):
+        self.game.map.remove_from_cell(self, (self.x, self.y))
+        self.x = x
+        self.y = y
+        self.game.map.add_to_cell(self, (self.x, self.y))
+
+    def start_slash(self, x, y, direction):
+        self.set_position(x, y)
+        self.set_direction(direction)
+
+    def update(self, dt):
+        self.sprite.x_pos = self.x * TILE_SIZE
+        self.sprite.y_pos = self.y * TILE_SIZE
+        self.sprite.update(dt)
+        
+        
+
 def converge(val, step, target=0):
     if val > target + step:
         return val - step

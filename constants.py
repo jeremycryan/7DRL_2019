@@ -23,6 +23,11 @@ HOP = 12
 REBOUND_DURATION = 0.18
 HOP_DURATION = 0.1
 
+LEFT = 0
+UP = 1
+RIGHT = 2
+DOWN = 3
+
 KEYDICT = {pygame.K_a: "a",
            pygame.K_b: "b",
            pygame.K_c: "c",

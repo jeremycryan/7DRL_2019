@@ -16,6 +16,7 @@ class Game(object):
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
         self.movers = []
+        self.effects = []
         self.camera = Camera()
         self.map = Map((30, 30))
         self.map.populate_rooms(self)
@@ -80,7 +81,7 @@ class Game(object):
             # Drawing goes here
             # TODO remove fill functions once screen is completely filled with tiles
             self.screen.fill((0, 0, 0))
-            for obj in self.movers:
+            for obj in self.movers + self.effects:
                 obj.update(dt)
             self.update_camera_target()
             #self.map.update(dt, (0, 30), (0, 30))

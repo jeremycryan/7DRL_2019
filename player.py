@@ -1,4 +1,4 @@
-from game_object import GameObject
+from game_object import *
 from constants import *
 from sprite_tools import *
 
@@ -9,7 +9,9 @@ class Player(GameObject):
         idle = SpriteSheet("will.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
+        self.slash = Slash(self.game, 0, 0)
         self.game.movers += [self]
+        self.game.effects += [self.slash]
 
         # TODO make this dependent on weapon?
         self.attack_damage = 1
@@ -38,7 +40,17 @@ class Player(GameObject):
 
     def hit(self, thing):
         #TODO attack swing animation
-        
+        if thing.x > self.x:
+            direction = RIGHT
+        elif thing.x < self.x:
+            direction = LEFT
+        elif thing.y >= self.y:
+            direction = DOWN
+        elif thing.y < self.y:
+            direction = UP
+        self.slash.start_slash(thing.x, thing.y, direction)
         thing.take_damage(self.attack_damage)
+
+
 
 
