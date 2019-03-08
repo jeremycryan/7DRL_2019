@@ -60,7 +60,7 @@ class Enemy(GameObject):
 
 class Bug(Enemy):
     
-    def __init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp = 1):
+    def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp = 1)
         readied = SpriteSheet("bug_readied.png", (2, 1), 2)
         self.sprite.add_animation({"Readied": readied})
@@ -97,3 +97,26 @@ class Bit(Enemy):
         idle = SpriteSheet("bit.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
+
+class FlameSpawner(Enemy):
+
+    def __init__(self, game, x, y):
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.approach_player_smart_minelay, hp = 1)
+        idle = SpriteSheet("bit.png", (2, 1), 2)
+        self.sprite.add_animation({"Idle": idle})
+        self.sprite.start_animation("Idle")
+
+    def spawn(self, x, y):
+        GroundHazard(self.game, x, y)
+
+class GroundHazard(Enemy):
+
+    def __init__(self, game, x, y):
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard, hp = 3)
+        idle = SpriteSheet("bit.png", (2, 1), 2)
+        self.sprite.add_animation({"Idle": idle})
+        self.sprite.start_animation("Idle")
+        
+    #def loseHp(self):
+
+        
