@@ -262,7 +262,7 @@ class Camera(object):
         self.shake_max_amp = 4
         self.shake_amp = 0
         self.shake_t_off = 0
-        self.shake_freq = 10
+        self.shake_freq = 12
         shake_duration = 0.3
         self.shake_decay = 1.0/shake_duration
 
@@ -278,7 +278,7 @@ class Camera(object):
         self.x += dx * dt * 3
         self.y += dy * dt * 3
 
-        self.shake_amp = max(0, self.shake_amp - self.shake_decay * dt * self.shake_max_amp)
+        self.shake_amp *= 0.04**dt
 
         return dt * self.speed
 

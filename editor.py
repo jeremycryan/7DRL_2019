@@ -12,8 +12,11 @@ class Editor(object):
         self.window_x = pygame.image.load("editor_x.png")
         self.window_xw = self.window_x.get_width()
         self.window_xh = self.window_x.get_height()
-        self.macro_tiles = [MacroTile(self, 0, 0, idx = 0),
-                            MacroTile(self, 100, 0, idx = 1)]
+        self.macro_tiles = [MacroTile(self, 0, 0, idx = 0, path= "move_left_tile"),
+                            MacroTile(self, 0, 0, idx = 1, path= "move_up_tile"),
+                            MacroTile(self, 0, 0, idx = 2, path= "move_down_tile"),
+                            MacroTile(self, 0, 0, idx = 3, path= "move_right_tile")]
+        self.draw_order = [item for item in self.macro_tiles]
         self.tile_containers = []
         cnum = 3
         for i in range(cnum):
@@ -32,7 +35,7 @@ class Editor(object):
         surf.blit(self.window_x, (206, self.y + 10))
         for c in self.tile_containers:
             c.draw(surf, eyoff = self.y)
-        for tile in self.macro_tiles:
+        for tile in self.draw_order:
             tile.draw(surf, eyoff = self.y)
 
     def update(self, dt):
@@ -93,9 +96,9 @@ class TileContainer(object):
 
 class MacroTile(object):
 
-    def __init__(self, editor, x=0, y=0, idx = 0):
+    def __init__(self, editor, x=0, y=0, idx = 0, path="move_right_tile"):
         self.editor = editor
-        self.set_surf_from_path("move_right_tile")
+        self.set_surf_from_path(path)
         self.y = 125
         
         self.x = 30 * idx + 50
@@ -183,8 +186,8 @@ class MacroTile(object):
         self.follow_mouse = True
         self.target_scale = 0.5
 
-        self.editor.macro_tiles.remove(self)
-        self.editor.macro_tiles.append(self)
+        self.editor.draw_order.remove(self)
+        self.editor.draw_order.append(self)
 
         if len(self.editor.carrying):
             for item in self.editor.carrying:

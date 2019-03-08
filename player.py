@@ -45,6 +45,7 @@ class Player(GameObject):
 
     def hit(self, thing):
         thing.take_damage(self.attack_damage)
+        self.game.camera.shake(0.5)
 
     def swing(self, dx, dy):
         self.slash.start_slash(self.x+dx, self.y+dy, (dx, dy))
