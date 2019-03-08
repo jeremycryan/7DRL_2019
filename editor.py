@@ -83,7 +83,7 @@ class TileContainer(object):
             surf.blit(self.hover_surf, (self.x, self.y + eyoff))
         else:
             surf.blit(self.surf, (self.x, self.y + eyoff))
-        
+
 
     def add_tile(self, tile):
 
@@ -92,7 +92,7 @@ class TileContainer(object):
         for item in self.tiles:
             item.remove_from_container()
         self.tiles = [tile]
-        
+
 
 class MacroTile(object):
 
@@ -100,7 +100,7 @@ class MacroTile(object):
         self.editor = editor
         self.set_surf_from_path(path)
         self.y = 125
-        
+
         self.x = 30 * idx + 50
         self.tx = x
         self.ty = y
@@ -111,7 +111,7 @@ class MacroTile(object):
         self.follow_mouse = False
         self.mouse_clicked = False
         self.in_container = False
-        
+
         self.scale = 0.5
         self.target_scale = 0.5
 
@@ -165,7 +165,7 @@ class MacroTile(object):
             for c in self.editor.tile_containers:
                 if not c.tiles:
                     c.hovered = False
-            
+
 
     def draw(self, surf, eyoff = 0):
         xoff = 0
@@ -179,7 +179,7 @@ class MacroTile(object):
                 (int(self.full_w*self.scale), int(self.full_h*self.scale)))
             xoff += 0
             yoff += 0
-        
+
         surf.blit(surf_to_draw, (self.x + xoff, self.y + yoff))
 
     def pickup(self):
@@ -214,17 +214,10 @@ class MacroTile(object):
             self.add_to_container()
         else:
             self.remove_from_container()
-    
-
-
-class Macro(object):
-
-    def __init__(self):
-        pass
 
 
 if __name__=="__main__":
-    
+
     a = pygame.display.set_mode(BLIT_SIZE)
     e = Editor()
     blit = pygame.Surface(WINDOW_SIZE)
@@ -249,5 +242,3 @@ if __name__=="__main__":
         e.draw(blit)
         a.blit(pygame.transform.scale(blit, BLIT_SIZE), (0, 0))
         pygame.display.flip()
-    
-    

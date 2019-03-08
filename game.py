@@ -10,11 +10,13 @@ from macro import Macro
 from block import *
 from player import Player
 from enemy import *
+from editor import *
 
 class Game(object):
 
     def __init__(self):
         pygame.init()
+        self.editor = Editor()
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
         self.movers = []
@@ -91,7 +93,7 @@ class Game(object):
                     if self.map.on_screen(self.camera, mover.x, mover.y):
                         if mover in self.movers: # move enemy
                             mover.move()
-            
+
             # Drawing goes here
             # TODO remove fill functions once screen is completely filled with tiles
             self.screen.fill((0, 0, 0))
