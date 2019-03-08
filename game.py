@@ -6,6 +6,8 @@ from math import sin, pi
 from sprite_tools import *
 from constants import *
 from map import Map
+from macro import Macro
+from block import *
 from player import Player
 from enemy import *
 
@@ -40,7 +42,10 @@ class Game(object):
 
         self.command_renders = {}
         self.command_rectangles = {}
-
+        self.test_macro = Macro()
+        self.test_macro.add_block(Right())
+        self.test_macro.add_block(AttackRight())
+        self.test_macro.add_block(Left())
 
     def main(self):
 
@@ -67,14 +72,24 @@ class Game(object):
                 enemies = self.movers[:]
                 enemies.remove(self.player)
                 self.turn_queue = [self.player] + enemies
+                self.player.mana += 1
+                for mover in self.turn_queue:
+                    mover.turns = 1
             else:
                 mover = self.turn_queue[0]
                 if mover is self.player:
-                    pass
+                    if mover.turns <= 0: # end player turn
+                        self.turn_queue.remove(mover)
+                    elif mover.macro: # run player macro
+                        if mover.macro.run(self, mover): # end macro
+                            mover.macro = None
+                            mover.turns = 0
                 else:
-                    self.turn_queue.remove(mover)
+                    mover.turns -= 1
+                    if mover.turns <= 0: # end enemy turn
+                        self.turn_queue.remove(mover)
                     if self.map.on_screen(self.camera, mover.x, mover.y):
-                        if mover in self.movers:
+                        if mover in self.movers: # move enemy
                             mover.move()
             
             # Drawing goes here
@@ -143,11 +158,13 @@ class Game(object):
 
 
     def move_player(self, dx, dy, end_turn=True):
+        if self.player.macro:
+            return
         if len(self.turn_queue) and self.turn_queue[0] is self.player:
             self.player.translate(dx, dy)
             self.delay += 0.05
             if end_turn:
-                self.turn_queue.remove(self.player)
+                self.player.turns -= 1
 
 
 class Terminal(object):
@@ -190,6 +207,9 @@ class Terminal(object):
                     self.game.move_player(-1, 0)
                 elif event.key == pygame.K_RIGHT:
                     self.game.move_player(1, 0)
+                elif event.key == pygame.K_z:
+                    if self.game.player in self.game.turn_queue:
+                        self.game.player.macro = self.game.test_macro
 
         for event in events:
             if event.type == pygame.KEYDOWN:
