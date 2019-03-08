@@ -12,10 +12,10 @@ class Editor(object):
         self.window_x = pygame.image.load("editor_x.png")
         self.window_xw = self.window_x.get_width()
         self.window_xh = self.window_x.get_height()
-        self.macro_tiles = [MacroTile(self, 0, 0, idx = 0, path= "move_left_tile"),
-                            MacroTile(self, 0, 0, idx = 1, path= "move_up_tile"),
-                            MacroTile(self, 0, 0, idx = 2, path= "move_down_tile"),
-                            MacroTile(self, 0, 0, idx = 3, path= "move_right_tile")]
+        self.macro_tiles = []#[MacroTile(self, 0, 0, idx = 0, path= "move_left_tile"),
+                            #MacroTile(self, 0, 0, idx = 1, path= "move_up_tile"),
+                            #MacroTile(self, 0, 0, idx = 2, path= "move_down_tile"),
+                            #MacroTile(self, 0, 0, idx = 3, path= "move_right_tile")]
         self.draw_order = [item for item in self.macro_tiles]
         self.tile_containers = []
         cnum = 3
