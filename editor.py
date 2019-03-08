@@ -3,165 +3,248 @@ import pygame
 from constants import *
 from sprite_tools import *
 import time
+import sys
 
 class Editor(object):
 
     def __init__(self):
+        self.window_surf = pygame.image.load("editor_window.png")
+        self.window_x = pygame.image.load("editor_x.png")
+        self.window_xw = self.window_x.get_width()
+        self.window_xh = self.window_x.get_height()
+        self.macro_tiles = [MacroTile(self, 0, 0, idx = 0),
+                            MacroTile(self, 100, 0, idx = 1)]
+        self.tile_containers = []
+        cnum = 3
+        for i in range(cnum):
+            self.tile_containers.append(TileContainer(x = i * 60 + 35, y = 60))
+        self.container_width = self.tile_containers[0].surf.get_width()
+        self.container_height = self.tile_containers[0].surf.get_height()
+        self.carrying = []
+        self.macro_length = 3
 
-        self.font = pygame.font.SysFont("monospace", 12)
-
-        self.cur_macro = None
-
-        self.line_spacing = 14
-
-        self.chars = "abcdefghijklmnopqrstuvwxyz "
-        self.char_surfs = {}
-        for char in self.chars:
-            self.char_surfs[char] = self.font.render(char, 0, (255, 255, 255))
-        self.char_width = self.char_surfs["a"].get_width()
-        self.char_height = self.char_surfs["a"].get_height()
-
-        self.cursor_pos = [0, 0]        
-        self.cursor_surf = pygame.image.load("cursor.png")
-        self.cursor_surf = pygame.transform.scale(self.cursor_surf,
-                                                    (self.char_width, self.char_height))
-        self.time = 0
-        self.blink_rate = 1
-
-        self.back_pressed = False
-        self.back_time = 0
-
+        self.y = WINDOW_HEIGHT
+        self.target_y = 0
 
     def draw(self, surf):
 
-        surf.fill((0, 0, 0))
-
-        yoff = 20
-        xoff = 20
-        letter_spacing = 0
-        for (y, line) in enumerate(self.cur_macro.lines):
-
-            for (x, letter) in enumerate(line + " "):
-                surf.blit(self.char_surfs[letter], (xoff + letter_spacing, yoff))
-                if [x, y] == self.cursor_pos and (self.time*self.blink_rate)%1 < 0.5:
-                    surf.blit(self.cursor_surf, (xoff + letter_spacing, yoff))
-                letter_spacing += self.char_width
-
-            letter_spacing = 0
-            yoff += self.line_spacing
-
+        surf.blit(self.window_surf, (0, self.y))
+        surf.blit(self.window_x, (206, self.y + 10))
+        for c in self.tile_containers:
+            c.draw(surf, eyoff = self.y)
+        for tile in self.macro_tiles:
+            tile.draw(surf, eyoff = self.y)
 
     def update(self, dt):
-        self.time += dt
-        if self.back_pressed:
-            self.back_time += dt
+
+        dy = self.target_y - self.y
+        self.y += dy * dt * 10
+
+        for tile in self.macro_tiles:
+            tile.update(dt)
+
+
+    def container_at(self, pos):
+
+        for c in self.tile_containers:
+            c.hovered = False
+            if pos[0] >= c.x and pos[0] <= c.x + self.container_width:
+                if pos[1] >= c.y and pos[1] <= c.y + self.container_height:
+                    c.hovered = True
+                    return c
+        return 0
+
+    def remove_tile_from_containers(self, tile):
+        for c in self.tile_containers:
+            if tile in c.tiles:
+                c.tiles.remove(tile)
+
+
+class TileContainer(object):
+
+    def __init__(self, x = 0, y = 0):
+
+        self.surf = pygame.image.load("editor_blank.png")
+        self.hover_surf = pygame.image.load("editor_blank_hover.png")
+        self.x = x
+        self.y = y
+
+        self.tiles = []
+
+        self.hovered = False
+
+
+    def draw(self, surf, eyoff = 0):
+
+        if self.hovered:
+            surf.blit(self.hover_surf, (self.x, self.y + eyoff))
         else:
-            self.back_time = 0
-
-    def move_cursor(self, dx, dy):
-        self.cursor_pos[0] += dx
-        self.cursor_pos[1] += dy
-
-        if self.cursor_pos[1] >= len(self.cur_macro.lines):
-            self.cursor_pos[1] = len(self.cur_macro.lines) - 1
-        if self.cursor_pos[1] <= 0:
-            self.cursor_pos[1] = 0
-
-        if self.cursor_pos[0] <= 0:
-            self.cursor_pos[0] = 0
-        elif self.cursor_pos[0] > len(self.cur_macro.lines[self.cursor_pos[1]]):
-            self.cursor_pos[0] = len(self.cur_macro.lines[self.cursor_pos[1]])
+            surf.blit(self.surf, (self.x, self.y + eyoff))
         
 
+    def add_tile(self, tile):
 
-    def check_events(self, events):
+        tile.tx = self.x
+        tile.ty = self.y
+        for item in self.tiles:
+            item.remove_from_container()
+        self.tiles = [tile]
+        
 
-        col = self.cursor_pos[0]
-        line = self.cursor_pos[1]
+class MacroTile(object):
 
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                self.time = 0
-                if event.key == pygame.K_UP:
-                    self.move_cursor(0, -1)
-                elif event.key == pygame.K_DOWN:
-                    self.move_cursor(0, 1)
-                elif event.key == pygame.K_LEFT:
-                    self.move_cursor(-1, 0)
-                elif event.key == pygame.K_RIGHT:
-                    self.move_cursor(1, 0)
-                elif event.key == pygame.K_BACKSPACE:
-                    if self.cur_macro.delete_char(line, col - 1):
-                        self.move_cursor(-1, 0)
-                    self.back_pressed = True
-                elif event.key in KEYDICT:
-                    new_char = KEYDICT[event.key]
-                    self.cur_macro.insert_char(line, col, new_char)
-                    self.move_cursor(1, 0)
+    def __init__(self, editor, x=0, y=0, idx = 0):
+        self.editor = editor
+        self.set_surf_from_path("move_right_tile")
+        self.y = 125
+        
+        self.x = 30 * idx + 50
+        self.tx = x
+        self.ty = y
 
-            elif event.type = pygame.KEYUP:
-                if event.key == pygame.K_BACKSPACE:
-                    self.back_pressed = False
+        self.full_w = self.surf.get_width()
+        self.full_h = self.surf.get_height()
+
+        self.follow_mouse = False
+        self.mouse_clicked = False
+        self.in_container = False
+        
+        self.scale = 0.5
+        self.target_scale = 0.5
+
+    @property
+    def w(self):
+        return self.surf.get_width() * self.scale
+
+    @property
+    def h(self):
+        return self.surf.get_height() * self.scale
+
+
+    def set_surf_from_path(self, path):
+        self.surf = pygame.image.load(path + ".png")
+        self.surf_small = pygame.image.load(path + "_small.png")
+
+    def update(self, dt):
+        dx = self.tx - self.x
+        dy = self.ty - self.y
+        if abs(dx) < 1: self.x = self.tx
+        if abs(dy) < 1: self.y = self.ty
+
+        p = 15.0
+        self.x += dx * dt * p
+        self.y += dy * dt * p
+
+        ds = self.target_scale - self.scale
+        self.scale += ds * dt * 20.0
+
+        self.update_from_mouse()
+
+        if not self.in_container and not self.follow_mouse:
+            self.ty = 125
+            self.tx = 30*self.editor.macro_tiles.index(self) + 50
+
+    def update_from_mouse(self):
+        x, y = [p//SCALE for p in pygame.mouse.get_pos()]
+        new_click = pygame.mouse.get_pressed()[0]
+        if new_click and not self.mouse_clicked:
+            if (x >= self.x and x <= self.x + self.w):
+                if (y >= self.y and y <= self.y + self.h):
+                    self.pickup()
+        self.mouse_clicked = new_click
+        if not new_click and self.follow_mouse: self.putdown()
+
+        if self.follow_mouse:
+            self.tx = x - self.w/2
+            self.ty = y - self.h/2
+            self.editor.container_at((x, y))
+        else:
+            for c in self.editor.tile_containers:
+                if not c.tiles:
+                    c.hovered = False
+            
+
+    def draw(self, surf, eyoff = 0):
+        xoff = 0
+        yoff = eyoff
+
+        surf_to_draw = self.surf
+        if self.scale <= 0.6:
+            surf_to_draw = self.surf_small
+        if abs(self.scale - 1.0) > 0.01:
+            surf_to_draw = pygame.transform.scale(surf_to_draw,
+                (int(self.full_w*self.scale), int(self.full_h*self.scale)))
+            xoff += 0
+            yoff += 0
+        
+        surf.blit(surf_to_draw, (self.x + xoff, self.y + yoff))
+
+    def pickup(self):
+        self.follow_mouse = True
+        self.target_scale = 0.5
+
+        self.editor.macro_tiles.remove(self)
+        self.editor.macro_tiles.append(self)
+
+        if len(self.editor.carrying):
+            for item in self.editor.carrying:
+                if item != self:
+                    item.putdown()
+        self.editor.carrying.append(self)
+
+    def add_to_container(self):
+        self.in_container = True
+        self.target_scale = 1.0
+
+    def remove_from_container(self):
+        self.in_container = False
+        self.target_scale = 0.5
+        self.editor.remove_tile_from_containers(self)
+
+    def putdown(self):
+        self.follow_mouse = False
+        self.target_scale = 0.5
+
+        c = self.editor.container_at((self.x + self.w/2, self.y + self.h/2))
+        if c:
+            c.add_tile(self)
+            self.add_to_container()
+        else:
+            self.remove_from_container()
     
 
 
 class Macro(object):
 
-    def __init__(self, line_num = 3):
-
-        self.line_num = line_num
-        self.lines = [""] * line_num
-
-
-    def insert_char(self, line, col, char):
-
-        if col >= len(self.lines[line]):
-            self.lines[line] = self.lines[line] + char
-            return True                        
-        
-        self.lines[line] = self.lines[line][:col] + char + self.lines[line][col:]
-        return True
-        
-    def delete_char(self, line, col):
-        if col < 0:
-            return False
-        self.lines[line] = self.lines[line][:col] + self.lines[line][col+1:]
-        return True
-                    
-
-    def write_line(self, line, text):
-
-        self.lines[line] = text
-
+    def __init__(self):
+        pass
 
 
 if __name__=="__main__":
-
-    pygame.init()
-
-    a = Macro(3)
-    a.write_line(0, "marsupial")
-    a.write_line(1, "quagmire")
-    a.write_line(2, "matt damon")
-    b = Editor()
-    b.cur_macro = a
-
-    c = pygame.Surface((WINDOW_SIZE))
-    d = pygame.display.set_mode((BLIT_SIZE))
+    
+    a = pygame.display.set_mode(BLIT_SIZE)
+    e = Editor()
+    blit = pygame.Surface(WINDOW_SIZE)
 
     then = time.time()
     time.sleep(0.001)
-    while True:
 
-        events = pygame.event.get()
+    while True:
 
         now = time.time()
         dt = now - then
-        then = now
+        then = time.time()
 
-        b.update(dt)
-        b.draw(c)
-        b.check_events(events)
-        d.blit(pygame.transform.scale(c, BLIT_SIZE), (0, 0))
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        blit.fill((100, 100, 100))
+        e.update(dt)
+        e.draw(blit)
+        a.blit(pygame.transform.scale(blit, BLIT_SIZE), (0, 0))
         pygame.display.flip()
+    
     
