@@ -1,11 +1,6 @@
 import random
 import math
-
-RIGHT = (1,0)
-LEFT = (-1,0)
-DOWN = (0,1)
-UP = (0,-1)
-directions = [UP, DOWN, LEFT, RIGHT]
+from constants import *
 
 def move_random(enemy):
     random.shuffle(directions)

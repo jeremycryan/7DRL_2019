@@ -6,12 +6,14 @@ class Player(GameObject):
 
     def __init__(self, game, x, y):
         GameObject.__init__(self, game, x, y, 5, fps = 4)
+        self.mana = 0
         idle = SpriteSheet("will.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
         self.slash = Slash(self.game, 0, 0)
         self.game.movers += [self]
         self.game.effects += [self.slash]
+        self.macro = None
 
         # TODO make this dependent on weapon?
         self.attack_damage = 1
@@ -29,28 +31,23 @@ class Player(GameObject):
             return False # Enemy blocking square
         return GameObject.translate(self, dx, dy)
 
-    def attack(self, dx, dy):
+    def attack(self, dx, dy, swing_miss=False):
         # TODO generalize this for different weapon types/interactions
         things_hit = self.game.map.get((self.x + dx, self.y + dy), "hittable")
         if len(things_hit) and abs(dx) > 0:
             self.flipped = dx < 0
         for thing in things_hit:
             self.hit(thing)
+            self.swing(dx, dy)
+        if swing_miss and not things_hit:
+            self.swing(dx, dy)
         return len(things_hit)
 
     def hit(self, thing):
-        #TODO attack swing animation
-        if thing.x > self.x:
-            direction = RIGHT
-        elif thing.x < self.x:
-            direction = LEFT
-        elif thing.y >= self.y:
-            direction = DOWN
-        elif thing.y < self.y:
-            direction = UP
-        self.slash.start_slash(thing.x, thing.y, direction)
         thing.take_damage(self.attack_damage)
 
-
+    def swing(self, dx, dy):
+        self.slash.start_slash(self.x+dx, self.y+dy, (dx, dy))
+        
 
 
