@@ -15,6 +15,11 @@ def hazard_fixed(enemy):
         enemy.hit(enemy.game.player)
     return True
 
+def hazard_bomb(enemy):
+    if abs(enemy.game.player.x - enemy.x)<2 and abs(enemy.game.player.y == enemy.y)<2:
+        enemy.hit(enemy.game.player, rebound = False)
+    return True
+
 def move_random(enemy):
     random.shuffle(directions)
     for d in directions:

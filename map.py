@@ -87,6 +87,8 @@ class Map(object):
                         FlameSpawner(game, x, y)
                     elif r < 0.07:
                         GroundHazard_Fixed(game, x, y)
+                    elif r < 0.10:
+                        Bomb(game, x, y)
 
 
     def add_to_cell(self, new_item, pos):
