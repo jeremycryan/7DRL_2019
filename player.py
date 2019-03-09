@@ -45,7 +45,7 @@ class Player(GameObject):
         self.sprite.start_animation("Idle")
         if attack and self.attack(dx, dy):
             return True # Able to hit enemy
-        if self.map.get((self.x+dx, self.y+dy), ("layer", 4)):
+        if self.map.get((self.x+dx, self.y+dy), ("layer", 4), ("hittable", True)):
             return False # Enemy blocking square
         return GameObject.translate(self, dx, dy)
 

@@ -6,6 +6,18 @@ from enemy import *
 
 def hazard(enemy):
     enemy.take_damage(1)
+    if enemy.game.player.x == enemy.x and enemy.game.player.y == enemy.y:
+        enemy.hit(enemy.game.player)
+    return True
+
+def hazard_fixed(enemy):
+    if enemy.game.player.x == enemy.x and enemy.game.player.y == enemy.y:
+        enemy.hit(enemy.game.player)
+    return True
+
+def hazard_bomb(enemy):
+    if abs(enemy.game.player.x - enemy.x)<2 and abs(enemy.game.player.y - enemy.y)<2:
+        enemy.hit(enemy.game.player, rebound = False)
     return True
 
 def move_random(enemy):
