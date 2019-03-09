@@ -25,7 +25,7 @@ class Macro:
         self.index = 0
 
     def run(self, game, player):
-        if not self.blocks[self.index].run(game, player):
+        if self.blocks[self.index] and not self.blocks[self.index].run(game, player):
             self.index = 0
             return True
         self.index += 1
