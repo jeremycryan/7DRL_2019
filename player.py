@@ -17,8 +17,6 @@ class Player(GameObject):
         self.sprite.add_animation({"Hurt": hurt})
         self.sprite.start_animation("Idle")
         self.slash = Slash(self.game, 0, 0)
-        self.game.movers += [self]
-        self.game.effects += [self.slash]
         self.macros = [None, None, None]
         self.macro = None
         self.blink = -1

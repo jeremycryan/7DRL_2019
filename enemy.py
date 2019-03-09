@@ -19,6 +19,8 @@ class Enemy(GameObject):
         self.max_hp = hp
         self.damage = damage
         self.delay = delay
+        self.map = game.map
+        game.map.add_to_cell(self, (x,y))
         self.countdown = random.randint(0, delay)
         self.enemy = True
         self.hittable = True

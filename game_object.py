@@ -15,8 +15,6 @@ class GameObject(object):
         self.flipped = False
         self.layer = layer
         self.game = game
-        self.map = game.map
-        game.map.add_to_cell(self, (x,y))
         self.sprite.x_pos = self.x * TILE_SIZE
         self.sprite.y_pos = self.y * TILE_SIZE
 
@@ -56,6 +54,8 @@ class GameObject(object):
         self.vx = dx
         self.vy = dy
         self.hop = 1
+        if self.map.get((self.x, self.y), "stairs"):
+            self.game.level_up()
         return True
 
     def collide(self, x, y):
