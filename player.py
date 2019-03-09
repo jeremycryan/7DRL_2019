@@ -8,6 +8,7 @@ class Player(GameObject):
     def __init__(self, game, x, y):
         GameObject.__init__(self, game, x, y, 5, fps = 4)
         self.mana = 0
+        self.mana_max = 3
         self.hp = 3
         self.hp_max = 3
         idle = SpriteSheet("will.png", (2, 1), 2)
@@ -74,6 +75,5 @@ class Player(GameObject):
     def take_damage(self, damage):
         self.game.camera.shake()
         self.hp -= damage
-        print("Oof!")
         self.sprite.start_animation("Hurt")
         self.blink = 0

@@ -37,6 +37,9 @@ class GameObject(object):
         yoff = int(self.game.camera.get_y() + rebound[1] + hop)
         self.sprite.x_pos -= xoff
         self.sprite.y_pos -= yoff
+        if hasattr(self, "draw_hp"):
+            self.draw_hp(surf, self.sprite.x_pos + TILE_SIZE/2,
+                         self.sprite.y_pos)
         self.sprite.draw(surf, self.flipped)
         self.sprite.y_pos += yoff
         self.sprite.x_pos += xoff

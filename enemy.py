@@ -3,6 +3,7 @@ import ai
 import random
 from sprite_tools import *
 from constants import *
+import pygame
 
 
 class Enemy(GameObject):
@@ -15,11 +16,17 @@ class Enemy(GameObject):
         self.behavior = behavior
         self.game.movers += [self]
         self.hp = hp
+        self.max_hp = hp
         self.damage = damage
         self.delay = delay
         self.countdown = random.randint(0, delay)
         self.enemy = True
         self.hittable = True
+        self.heart = pygame.image.load("heart_small.png")
+        self.eheart = pygame.image.load("empty_heart_small.png")
+        self.heart_width = self.heart.get_width()
+        self.width = TILE_SIZE/2
+        self.hp_visible = True
 
     def update(self, dt):
         GameObject.update(self, dt)
@@ -31,6 +38,21 @@ class Enemy(GameObject):
             self.countdown = self.delay
             if self.behavior(self):
                 self.game.delay += 0
+
+    def draw_hp(self, surf, x, y):
+        if self.hp_visible:
+            if self.hp < self.max_hp:
+                x_start = x - self.heart_width/2 * self.max_hp
+                y_start = y
+                x_space = self.heart_width
+                hp = self.hp
+                for i in range(self.max_hp):
+                    if hp >= 1:
+                        surf.blit(self.heart, (x_start, y_start))
+                    else:
+                        surf.blit(self.eheart, (x_start, y_start))
+                    x_start += x_space
+                    hp -= 1
 
     def draw(self, surf):
         GameObject.draw(self, surf)
@@ -67,7 +89,7 @@ class Enemy(GameObject):
 class Bug(Enemy):
     
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp=1)
+        Enemy.__init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp=2)
         readied = SpriteSheet("bug_readied.png", (2, 1), 2)
         self.sprite.add_animation({"Readied": readied})
 
@@ -114,7 +136,7 @@ class FlameSpawner(Enemy): #Needs art, flame dude
 
     def spawn(self, x, y):
         GroundHazard(self.game, x, y)
-
+        
 class GroundHazard(Enemy): #Needs art, flame
 
     def __init__(self, game, x, y):
@@ -130,6 +152,8 @@ class GroundHazard(Enemy): #Needs art, flame
         self.layer = FLOOR_DETAIL_LAYER
         self.avoid = True
         self.height = 2
+
+        self.hp_visible = False
 
     def update(self, dt):
         Enemy.update(self, dt)
