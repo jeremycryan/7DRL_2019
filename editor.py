@@ -19,6 +19,7 @@ class Editor(object):
                             MacroTile(self, 0, 0, idx = 1, path= "move_up_tile"),
                             MacroTile(self, 0, 0, idx = 2, path= "move_down_tile"),
                             MacroTile(self, 0, 0, idx = 3, path= "move_right_tile")]
+
         self.draw_order = [item for item in self.macro_tiles]
         self.tile_containers = []
         cnum = 3

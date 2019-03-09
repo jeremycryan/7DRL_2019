@@ -32,9 +32,9 @@ class Player(GameObject):
 
     def update(self, dt):
         GameObject.update(self, dt)
-        if self.blink < 0.25:
+        if self.blink < 0.25 and self.blink >= 0:
             self.blink += dt
-        elif self.blink >= 0:
+        elif self.blink >= 0.25:
             self.sprite.start_animation("Idle")
             self.blink = -1
 
