@@ -1,6 +1,24 @@
 import random
 import math
 from constants import *
+from enemy import *
+
+
+def hazard(enemy):
+    enemy.take_damage(1)
+    if enemy.game.player.x == enemy.x and enemy.game.player.y == enemy.y:
+        enemy.hit(enemy.game.player)
+    return True
+
+def hazard_fixed(enemy):
+    if enemy.game.player.x == enemy.x and enemy.game.player.y == enemy.y:
+        enemy.hit(enemy.game.player)
+    return True
+
+def hazard_bomb(enemy):
+    if abs(enemy.game.player.x - enemy.x)<2 and abs(enemy.game.player.y - enemy.y)<2:
+        enemy.hit(enemy.game.player, rebound = False)
+    return True
 
 def move_random(enemy):
     random.shuffle(directions)
@@ -18,6 +36,11 @@ def approach_player(enemy):
             return True
     return False
 
+def approach_player_fast(enemy, count = 2):
+    for x in range(count-1):
+        approach_player(enemy)
+    return approach_player(enemy)
+
 def approach_player_smart(enemy):
     dx = enemy.game.player.x - enemy.x + enemy.vx
     dy = enemy.game.player.y - enemy.y + enemy.vy
@@ -29,6 +52,17 @@ def approach_player_smart(enemy):
         if enemy.translate(*d):
             return True
     return False
+
+def approach_player_smart_fast(enemy, count = 2):
+    for x in range(count-1):
+        approach_player_smart(enemy)
+    return approach_player(enemy)
+
+def approach_player_smart_minelay(enemy):
+
+    enemy.spawn(enemy.x, enemy.y)
+    return approach_player_smart(enemy)
+    
 
 def charge_player(enemy):
     if not hasattr(enemy, "charging"):

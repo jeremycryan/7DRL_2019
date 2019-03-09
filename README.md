@@ -1,2 +1,3 @@
-# 7DRL_2019
-A text-based roguelike, featuring Will Derksen.
+# Seven Day Roguelike 2019
+
+Will Derksen master hacker simulator.
