@@ -149,7 +149,7 @@ class GroundHazard(Enemy): #Needs art, flame
                                    "Low": low})
         self.sprite.start_animation("High")
         self.hittable = False
-        self.layer = FLOOR_DETAIL_LAYER
+        self.layer = WALL_LAYER
         self.avoid = True
         self.height = 2
 
@@ -174,7 +174,7 @@ class GroundHazard_Fixed(Enemy): #Needs art, spikes
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
         self.hittable = False
-        self.layer = FLOOR_DETAIL_LAYER
+        self.layer = WALL_LAYER
         self.avoid = True
 
 class Bomb(Enemy): #Needs art, bomb
