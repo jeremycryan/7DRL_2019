@@ -198,8 +198,7 @@ class Game(object):
             self.delay += 0.05
             if end_turn:
                 self.player.turns -= 1
-                self.player.mana += 1
-
+                self.player.mana = min(self.player.mana_max, self.player.mana + 1)
 
 class Camera(object):
 
