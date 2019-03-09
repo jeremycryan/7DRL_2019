@@ -16,9 +16,9 @@ class Game(object):
 
     def __init__(self):
         pygame.init()
-        self.editor = Editor()
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
+        self.editor = Editor()
         self.movers = []
         self.effects = []
         self.camera = Camera()
@@ -74,7 +74,6 @@ class Game(object):
                 enemies = self.movers[:]
                 enemies.remove(self.player)
                 self.turn_queue = [self.player] + enemies
-                self.player.mana += 1
                 for mover in self.turn_queue:
                     mover.turns = 1
             else:
@@ -97,7 +96,7 @@ class Game(object):
             # Drawing goes here
             # TODO remove fill functions once screen is completely filled with tiles
             self.screen.fill((0, 0, 0))
-            for obj in self.movers + self.effects:
+            for obj in self.movers + self.effects + [self.editor]:
                 obj.update(dt)
             self.update_camera_target()
             #self.map.update(dt, (0, 30), (0, 30))
@@ -167,6 +166,7 @@ class Game(object):
             self.delay += 0.05
             if end_turn:
                 self.player.turns -= 1
+                self.player.mana += 1
 
 
 class Terminal(object):
