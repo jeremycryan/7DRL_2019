@@ -53,14 +53,25 @@ class Game(object):
                     self.move_player(-1, 0)
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.move_player(1, 0)
+                elif event.key == pygame.K_e:
+                    self.editor.toggle()
                 elif event.key == pygame.K_z:
-                    if self.player in self.turn_queue:
+                    if self.editor.active:
+                        self.player.macros[0] = self.editor.get_macro()
+                        self.editor.toggle()
+                    elif self.player in self.turn_queue:
                         self.player.macro = self.player.macros[0]
                 elif event.key == pygame.K_x:
-                    if self.player in self.turn_queue:
+                    if self.editor.active:
+                        self.player.macros[1] = self.editor.get_macro()
+                        self.editor.toggle()
+                    elif self.player in self.turn_queue:
                         self.player.macro = self.player.macros[1]
                 elif event.key == pygame.K_c:
-                    if self.player in self.turn_queue:
+                    if self.editor.active:
+                        self.player.macros[2] = self.editor.get_macro()
+                        self.editor.toggle()
+                    elif self.player in self.turn_queue:
                         self.player.macro = self.player.macros[2]
 
 
