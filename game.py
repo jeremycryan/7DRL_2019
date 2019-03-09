@@ -21,6 +21,13 @@ class Game(object):
         self.editor = Editor()
         self.player = Player(self, 0, 0)
         self.camera = Camera()
+
+        self.black_screen = pygame.Surface(WINDOW_SIZE).convert()
+        self.black_screen.fill((0, 0, 0))
+        self.black_alpha = 255.0
+        self.black_screen.set_alpha(self.black_alpha)
+        self.black_shade = DOWN
+        
         self.load_level()
         self.delay = 0
         self.command_font = pygame.font.SysFont("monospace", 12)
@@ -104,6 +111,7 @@ class Game(object):
             then = now
 
             dt = self.camera.update(real_dt)
+            dt = min(dt, 1/30.0)
 
             events = pygame.event.get()
             self.handle_events(events)
@@ -146,9 +154,21 @@ class Game(object):
             #self.terminal.draw(self.screen)
             self.render_health(self.screen)
             self.editor.draw(self.screen)
+            self.update_black_screen(dt)
             self.update_screen()
             self.draw_fps(real_dt)   #   TODO remove from final build
             pygame.display.flip()
+
+
+    def update_black_screen(self, dt):
+        rate = 350
+        if self.black_shade == UP:
+            self.black_alpha = min(self.black_alpha + rate*dt, 255)
+        elif self.black_shade == DOWN:
+            self.black_alpha = max(0, self.black_alpha - rate*dt)
+
+        if self.black_alpha == 255 and self.black_shade == UP:
+            self.load_level()
 
 
     def draw_map(self):
@@ -173,6 +193,9 @@ class Game(object):
 
 
     def update_screen(self):
+        if self.black_alpha:
+            self.black_screen.set_alpha(self.black_alpha)
+            self.screen.blit(self.black_screen, (0, 0))
         self.screen_blit.blit(pygame.transform.scale(self.screen, BLIT_SIZE), (0, 0))
 
 
@@ -197,7 +220,7 @@ class Game(object):
                 self.player.mana = min(self.player.mana_max, self.player.mana + 1)
 
     def level_up(self):
-        self.load_level()
+        self.black_shade = UP
 
     def load_level(self, difficulty=1):
         self.movers = [self.player]
@@ -212,6 +235,9 @@ class Game(object):
         self.turn_queue = []
         self.player.sprite.x_pos = self.player.x * TILE_SIZE
         self.player.sprite.y_pos = self.player.y * TILE_SIZE
+        
+        self.black_shade = DOWN
+        self.black_alpha = 255.0
 
 
 class Camera(object):
@@ -258,8 +284,10 @@ class Camera(object):
         self.shake_amp += self.shake_max_amp * amplitude
 
     def focus(self, x, y):
-        self.x = x*TILE_SIZE-WINDOW_WIDTH/2
-        self.y = y*TILE_SIZE-WINDOW_HEIGHT/2
+        self.x = x*TILE_SIZE-WINDOW_WIDTH/2 + TILE_SIZE/2
+        self.y = y*TILE_SIZE-WINDOW_HEIGHT/2 + TILE_SIZE/2
+        self.target_x = self.x
+        self.target_y = self.y
 
     def get_x(self):
         return self.x
