@@ -19,14 +19,10 @@ class Game(object):
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
         self.editor = Editor()
-        self.movers = []
-        self.effects = []
+        self.player = Player(self, 0, 0)
         self.camera = Camera()
-        self.map = Map((30, 30))
-        spawn = self.map.populate_path(self)
+        self.load_level()
         self.delay = 0
-        self.player = Player(self, spawn[0][0], spawn[0][1])
-        self.turn_queue = []
         self.command_font = pygame.font.SysFont("monospace", 12)
         self.command_rectangles = {}
         test_macro = Macro()
@@ -191,7 +187,7 @@ class Game(object):
 
 
     def move_player(self, dx, dy, end_turn=True):
-        if self.player.macro:
+        if self.player.macro or self.editor.active:
             return
         if len(self.turn_queue) and self.turn_queue[0] is self.player:
             self.player.translate(dx, dy)
@@ -199,6 +195,24 @@ class Game(object):
             if end_turn:
                 self.player.turns -= 1
                 self.player.mana = min(self.player.mana_max, self.player.mana + 1)
+
+    def level_up(self):
+        self.load_level()
+
+    def load_level(self, difficulty=1):
+        self.movers = [self.player]
+        self.effects = [self.player.slash]
+        self.map = Map((30, 30))        
+        spawn = self.map.populate_path(self, difficulty)
+        self.player.x = spawn[0]
+        self.player.y = spawn[1]
+        self.player.map = self.map
+        self.map.add_to_cell(self.player, (self.player.x,self.player.y))
+        self.camera.focus(self.player.x, self.player.y)
+        self.turn_queue = []
+        self.player.sprite.x_pos = self.player.x * TILE_SIZE
+        self.player.sprite.y_pos = self.player.y * TILE_SIZE
+
 
 class Camera(object):
 
@@ -242,6 +256,10 @@ class Camera(object):
 
     def shake(self, amplitude = 1.0):
         self.shake_amp += self.shake_max_amp * amplitude
+
+    def focus(self, x, y):
+        self.x = x*TILE_SIZE-WINDOW_WIDTH/2
+        self.y = y*TILE_SIZE-WINDOW_HEIGHT/2
 
     def get_x(self):
         return self.x

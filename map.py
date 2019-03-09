@@ -71,13 +71,13 @@ class Map(object):
                                 Tile(game, x1, y1)
         self.populate_random(game, 0.9)
 
-    def populate_path(self, game):
+    def populate_path(self, game, difficulty=1):
         self.populate_wall(game)
         xmax = len(self.cells)-1
         ymax = len(self.cells[0])-1
-        SEED_DENSITY = 0.05
-        ROOM_MIN_SIZE = 2
-        ROOM_MAX_SIZE = 4
+        SEED_DENSITY = 0.07
+        ROOM_MIN_SIZE = 3
+        ROOM_MAX_SIZE = 5
         N = int(SEED_DENSITY*xmax*ymax)
         seeds = [(random.randint(1, xmax-1), random.randint(1,ymax-1)) for i in range(N)]
         seeds.sort(key=lambda x: x[0])
@@ -107,10 +107,13 @@ class Map(object):
                 if not self.get((x,y)):
                     Wall(game, x, y)
         # Spawn enemies
-        self.populate_enemies(game)
+        self.populate_enemies(game, difficulty)
         if random.random() < 0.5:
             seeds.sort(key=lambda x: x[1])
-        return (seeds[0], seeds[-1])
+        if random.random() < 0.5:
+            seeds = seeds[::-1]
+        Stairs(game, seeds[-1][0], seeds[-1][1])
+        return seeds[0]
 
     def clear_path(self, game, s1, s2):
         x, y = s1[0], s1[1]
@@ -239,6 +242,8 @@ class Tile(GameObject):
         self.sprite.add_animation({"Static": static})
         self.sprite.start_animation("Static")
         self.static = True
+        self.map = game.map
+        game.map.add_to_cell(self, (x,y))
 
     def draw(self, surf):
         GameObject.draw(self, surf)
@@ -255,6 +260,18 @@ class Wall(Tile):
         self.sprite.start_animation("Static")
         self.static = True
 
+class Stairs(Tile):
+
+    def __init__(self, game, x, y, fps=4):
+        Tile.__init__(self, game, x, y, fps=fps)
+        self.layer = FLOOR_LAYER
+        sprite_paths = "stair.png"
+        static = SpriteSheet(sprite_paths, (1, 1), 1)
+        self.sprite.add_animation({"Static": static})
+        self.sprite.start_animation("Static")
+        self.static = True
+        self.stairs = True
+        self.avoid = True
 
 
 if __name__=="__main__":
