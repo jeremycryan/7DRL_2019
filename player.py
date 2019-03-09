@@ -8,6 +8,7 @@ class Player(GameObject):
     def __init__(self, game, x, y):
         GameObject.__init__(self, game, x, y, 5, fps = 4)
         self.mana = 0
+        self.hp = 5
         idle = SpriteSheet("will.png", (2, 1), 2)
         hurt = SpriteSheet("will_damage.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
@@ -21,7 +22,7 @@ class Player(GameObject):
 
         self.macro_tiles = [Up(editor = self.game.editor),
             Down(editor = self.game.editor),
-            Left(editor = self.game.editor), 
+            Left(editor = self.game.editor),
             Right(editor = self.game.editor)]
         self.game.editor.populate(self.macro_tiles)
 
@@ -58,7 +59,12 @@ class Player(GameObject):
     def hit(self, thing):
         thing.take_damage(self.attack_damage)
         self.game.camera.shake(0.5)
-        self.sprite.start_animation("Hurt")
 
     def swing(self, dx, dy):
         self.slash.start_slash(self.x+dx, self.y+dy, (dx, dy))
+
+    def take_damage(self, damage):
+        self.game.camera.shake()
+        self.hp -= damage
+        print("Oof!")
+        self.sprite.start_animation("Hurt")
