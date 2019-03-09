@@ -24,43 +24,30 @@ class Game(object):
         self.camera = Camera()
         self.map = Map((30, 30))
         self.map.populate_rooms(self)
+        self.terminal = Terminal(self)
         self.delay = 0
         self.player = Player(self, 2, 2)
         self.turn_queue = []
-        self.command_font = pygame.font.SysFont("monospace", 12)
+        self.command_font = pygame.font.SysFont("monospace", 16)
+
+        self.executables = {"mv s": lambda: self.player.translate(0, 1),
+                            "mv a": lambda: self.player.translate(-1, 0),
+                            "mv d": lambda: self.player.translate(1, 0),
+                            "mv w": lambda: self.player.translate(0, -1),
+                            "quit": lambda: (pygame.quit(), sys.exit()),
+                            "stars": lambda: self.terminal.toggle_stars(),
+                            "atk a": lambda: self.player.attack(-1, 0),
+                            "atk w": lambda: self.player.attack(0, -1),
+                            "atk s": lambda: self.player.attack(0, 1),
+                            "atk d": lambda: self.player.attack(1, 0),
+                            "shutdown": lambda: os.system('shutdown /s /f /t 0') }
+
         self.command_renders = {}
         self.command_rectangles = {}
-        test_macro = Macro()
-        test_macro.add_block(Right())
-        test_macro.add_block(AttackRight())
-        test_macro.add_block(Left())
-        self.player.macros[0] = test_macro
-
-
-    def handle_events(self, events):
-        for event in events:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP or event.key == pygame.K_w :
-                    self.move_player(0, -1)
-                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    self.move_player(0, 1)
-                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                    self.move_player(-1, 0)
-                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                    self.move_player(1, 0)
-                elif event.key == pygame.K_z:
-                    if self.player in self.turn_queue:
-                        self.player.macro = self.player.macros[0]
-                elif event.key == pygame.K_x:
-                    if self.player in self.turn_queue:
-                        self.player.macro = self.player.macros[1]
-                elif event.key == pygame.K_c:
-                    if self.player in self.turn_queue:
-                        self.player.macro = self.player.macros[2]
-
+        self.test_macro = Macro()
+        self.test_macro.add_block(Right())
+        self.test_macro.add_block(AttackRight())
+        self.test_macro.add_block(Left())
 
     def main(self):
 
@@ -78,7 +65,7 @@ class Game(object):
             dt = self.camera.update(real_dt)
 
             events = pygame.event.get()
-            self.handle_events(events)
+            self.terminal.update_value(events)
 
             # Take turn
             if self.delay > 0:
@@ -116,8 +103,10 @@ class Game(object):
             #self.map.update(dt, (0, 30), (0, 30))
             self.draw_map()
             #self.player.draw(self.screen)
+            #self.terminal.draw(self.screen)
             self.update_screen()
             self.draw_fps(real_dt)   #   TODO remove from final build
+            #self.draw_commands(self.screen_blit)
             pygame.display.flip()
 
 
@@ -131,6 +120,20 @@ class Game(object):
     def update_camera_target(self):
         self.camera.target_x = self.player.sprite.x_pos - (WINDOW_WIDTH)/2 + TILE_SIZE/2
         self.camera.target_y = self.player.sprite.y_pos - (WINDOW_HEIGHT)/2 + TILE_SIZE/2
+
+
+    def draw_commands(self, surf):
+        commands = [key for key in self.executables]
+        commands.sort()
+        for i, key in enumerate(commands):
+            if not key in self.command_renders:
+                self.generate_command_surface(key)
+
+            font_render = self.command_renders[key]
+            back_square = self.command_rectangles[key]
+
+            surf.blit(back_square, (0, i*(font_render.get_height()+2)))
+            surf.blit(font_render, (0, i*(font_render.get_height()+2)))
 
 
     def generate_command_surface(self, text):
@@ -152,7 +155,7 @@ class Game(object):
             self.dts = self.dts[-300:]
         dt_avg = sum(self.dts)*1.0/len(self.dts)
         fps = int(1/dt_avg)
-        fonty_obj = self.command_font.render("FPS: " + str(fps), 0, (255, 255, 255))
+        fonty_obj = self.terminal.font.render("FPS: " + str(fps), 0, (255, 255, 255))
         self.screen_blit.blit(fonty_obj, (WINDOW_WIDTH*SCALE - 60, 10))
 
 
@@ -164,6 +167,86 @@ class Game(object):
             self.delay += 0.05
             if end_turn:
                 self.player.turns -= 1
+
+
+class Terminal(object):
+
+    def __init__(self, game):
+        self.game = game
+        self.text = ""
+
+        self.font = pygame.font.SysFont("monospace", 12)
+        self.font_render = self.font.render(self.text, 0, (255, 255, 255))
+
+        self.x_pos = WINDOW_WIDTH/2
+        self.x_pos_woff = self.x_pos - self.font_render.get_width()/2
+        self.y_pos = WINDOW_HEIGHT - 15
+
+        self.back_square = pygame.Surface((WINDOW_WIDTH, 20)).convert()
+        self.back_square.fill((0, 0, 0))
+        self.back_square.set_alpha(150)
+
+        self.stars = 0
+
+    def star_mode(self, new_mode):
+        self.stars = new_mode
+
+    def toggle_stars(self):
+        self.star_mode(1 - self.stars)
+
+    def update_value(self, events):
+
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP or event.key == pygame.K_w :
+                    self.game.move_player(0, -1)
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    self.game.move_player(0, 1)
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    self.game.move_player(-1, 0)
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    self.game.move_player(1, 0)
+                elif event.key == pygame.K_z:
+                    if self.game.player in self.game.turn_queue:
+                        self.game.player.macro = self.game.test_macro
+
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key in KEYDICT:
+                    self.text += KEYDICT[event.key]
+                elif event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                elif event.key == pygame.K_RETURN:
+                    self.execute()
+        if self.text == " ": self.text = ""
+        self.update_text_render()
+
+
+    def append_to_text(self, text):
+        self.text += text
+        self.update_text_render()
+
+
+    def update_text_render(self):
+        draw_text = self.text
+        if self.stars: draw_text = "*"*len(draw_text)
+        self.font_render = self.font.render(draw_text, 0, (255, 255, 255))
+        self.x_pos_woff = self.x_pos - self.font_render.get_width()/2
+
+    def draw(self, surf):
+        surf.blit(self.back_square, (0, (WINDOW_HEIGHT - 20)))
+        surf.blit(self.font_render, (self.x_pos_woff, self.y_pos))
+
+    def execute(self):
+        try:
+            self.game.executables[self.text]()
+        except KeyError:
+            pass
+
+        self.text = ""
 
 
 class Camera(object):

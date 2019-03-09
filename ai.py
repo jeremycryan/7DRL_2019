@@ -16,7 +16,7 @@ def hazard_fixed(enemy):
     return True
 
 def hazard_bomb(enemy):
-    if abs(enemy.game.player.x - enemy.x)<2 and abs(enemy.game.player.y == enemy.y)<2:
+    if abs(enemy.game.player.x - enemy.x)<2 and abs(enemy.game.player.y - enemy.y)<2:
         enemy.hit(enemy.game.player, rebound = False)
     return True
 

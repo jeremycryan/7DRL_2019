@@ -57,9 +57,10 @@ class Enemy(GameObject):
         if self.hp <= 0:
             self.die()
 
-    def hit(self, player):
-        self.reboundx = player.x - self.x
-        self.reboundy = player.y - self.y
+    def hit(self, player, rebound=True):
+        if rebound:
+            self.reboundx = player.x - self.x
+            self.reboundy = player.y - self.y
         player.take_damage(self.damage);
 
 
@@ -138,7 +139,7 @@ class GroundHazard_Fixed(Enemy): #Needs art, spikes
 class Bomb(Enemy): #Needs art, bomb
 
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard, hp = 3, damage=1)
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard_bomb, hp = 3, damage=1)
         idle = SpriteSheet("bit.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
