@@ -40,8 +40,8 @@ class Map(object):
         for y in range(ymax):
             Wall(game, 0, y)
             Wall(game, xmax-1, y)
-        for x in range(1, 4):
-            for y in range(1, 4):
+        for x in range(1, 6):
+            for y in range(1, 6):
                 Tile(game, x, y)
 
 
