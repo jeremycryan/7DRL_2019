@@ -44,10 +44,11 @@ class Game(object):
 
         self.command_renders = {}
         self.command_rectangles = {}
-        self.test_macro = Macro()
-        self.test_macro.add_block(Right())
-        self.test_macro.add_block(AttackRight())
-        self.test_macro.add_block(Left())
+        test_macro = Macro()
+        test_macro.add_block(Right())
+        test_macro.add_block(AttackRight())
+        test_macro.add_block(Left())
+        self.player.macros[0] = test_macro
 
     def main(self):
 
@@ -211,7 +212,13 @@ class Terminal(object):
                     self.game.move_player(1, 0)
                 elif event.key == pygame.K_z:
                     if self.game.player in self.game.turn_queue:
-                        self.game.player.macro = self.game.test_macro
+                        self.game.player.macro = self.game.player.macros[0]
+                elif event.key == pygame.K_x:
+                    if self.game.player in self.game.turn_queue:
+                        self.game.player.macro = self.game.player.macros[1]
+                elif event.key == pygame.K_c:
+                    if self.game.player in self.game.turn_queue:
+                        self.game.player.macro = self.game.player.macros[2]
 
         for event in events:
             if event.type == pygame.KEYDOWN:
