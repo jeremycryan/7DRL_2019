@@ -5,7 +5,7 @@ from sprite_tools import *
 
 class Enemy(GameObject):
 
-    def __init__(self, game, x, y, delay=1, hp=1, behavior=ai.approach_player_smart):
+    def __init__(self, game, x, y, delay=1, hp=1, damage=1, behavior=ai.approach_player_smart):
         GameObject.__init__(self, game, x, y, layer=4)
         idle = SpriteSheet("bug.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
@@ -13,6 +13,7 @@ class Enemy(GameObject):
         self.behavior = behavior
         self.game.movers += [self]
         self.hp = hp
+        self.damage = damage
         self.delay = delay
         self.countdown = random.randint(0, delay)
         self.enemy = True
@@ -54,15 +55,13 @@ class Enemy(GameObject):
     def hit(self, player):
         self.reboundx = player.x - self.x
         self.reboundy = player.y - self.y
-        self.game.camera.shake()
-        print("Oof!")
-        player.sprite.start_animation("Hurt")
+        player.take_damage(self.damage);
 
 
 class Bug(Enemy):
     
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp = 1)
+        Enemy.__init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp=1, damage=1)
         readied = SpriteSheet("bug_readied.png", (2, 1), 2)
         self.sprite.add_animation({"Readied": readied})
 
@@ -77,7 +76,7 @@ class Bug(Enemy):
 class Ebat(Enemy):
 
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=1, hp = 1, behavior=ai.move_random)
+        Enemy.__init__(self, game, x, y, delay=1, hp = 1, behavior=ai.move_random, damage=1)
         idle = SpriteSheet("ebat.png", (2, 1), 2)
         readied = SpriteSheet("ebat_readied.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle, "Readied": readied})
@@ -94,7 +93,7 @@ class Ebat(Enemy):
 class Bit(Enemy):
 
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.charge_player, hp = 1)
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.charge_player, hp = 1, damage=1)
         idle = SpriteSheet("bit.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
@@ -102,7 +101,7 @@ class Bit(Enemy):
 class FlameSpawner(Enemy):
 
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.approach_player_smart_minelay, hp = 1)
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.approach_player_smart_minelay, hp = 1, damage=1)
         idle = SpriteSheet("bit.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
@@ -113,7 +112,7 @@ class FlameSpawner(Enemy):
 class GroundHazard(Enemy):
 
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard, hp = 3)
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard, hp = 3, damage=1)
         idle = SpriteSheet("bit.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
