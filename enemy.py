@@ -5,7 +5,7 @@ from sprite_tools import *
 
 class Enemy(GameObject):
 
-    def __init__(self, game, x, y, delay=1, hp = 1, behavior=ai.approach_player_smart):
+    def __init__(self, game, x, y, delay=1, hp=1, behavior=ai.approach_player_smart):
         GameObject.__init__(self, game, x, y, layer=4)
         idle = SpriteSheet("bug.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
@@ -56,6 +56,7 @@ class Enemy(GameObject):
         self.reboundy = player.y - self.y
         self.game.camera.shake()
         print("Oof!")
+        player.sprite.start_animation("Hurt")
 
 
 class Bug(Enemy):
@@ -119,4 +120,3 @@ class GroundHazard(Enemy):
         
     #def loseHp(self):
 
-        
