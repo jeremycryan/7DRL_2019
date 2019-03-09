@@ -39,12 +39,13 @@ class MacroTile(object):
     def update(self, dt):
         dx = self.tx - self.x
         dy = self.ty - self.y
-        if abs(dx) < 1: self.x = self.tx
-        if abs(dy) < 1: self.y = self.ty
 
         p = 15.0
         self.x += dx * dt * p
         self.y += dy * dt * p
+
+        if abs(dx) <= 1: self.x = self.tx
+        if abs(dy) <= 1: self.y = self.ty
 
         ds = self.target_scale - self.scale
         self.scale += ds * dt * 20.0
@@ -169,18 +170,30 @@ class Right(Block):
         player.translate(*RIGHT, False)
 
 class AttackUp(Block):
+    def __init__(self, *args, **kwargs):
+        Block.__init__(self, *args, path="atk_up_tile", **kwargs)
+        
     def action(self, player):
         player.attack(*UP, True)
 
 class AttackDown(Block):
+    def __init__(self, *args, **kwargs):
+        Block.__init__(self, *args, path="atk_down_tile", **kwargs)
+    
     def action(self, player):
         player.attack(*DOWN, True)
 
 class AttackLeft(Block):
+    def __init__(self, *args, **kwargs):
+        Block.__init__(self, *args, path="atk_left_tile", **kwargs)
+        
     def action(self, player):
         player.attack(*LEFT, True)
 
 class AttackRight(Block):
+    def __init__(self, *args, **kwargs):
+        Block.__init__(self, *args, path="atk_right_tile", **kwargs)
+        
     def action(self, player):
         player.attack(*RIGHT, True)
 

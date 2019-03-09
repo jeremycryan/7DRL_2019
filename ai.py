@@ -60,9 +60,13 @@ def approach_player_smart_fast(enemy, count = 2):
 
 def approach_player_smart_minelay(enemy):
 
-    enemy.spawn(enemy.x, enemy.y)
-    return approach_player_smart(enemy)
-    
+    x, y = enemy.x, enemy.y
+    a = approach_player_smart(enemy)
+    if abs(enemy.game.player.x - x) + abs(enemy.game.player.y - y) != 1:
+        if a:
+            enemy.spawn(x, y)
+    return a
+        
 
 def charge_player(enemy):
     if not hasattr(enemy, "charging"):

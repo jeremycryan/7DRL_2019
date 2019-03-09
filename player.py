@@ -8,7 +8,8 @@ class Player(GameObject):
     def __init__(self, game, x, y):
         GameObject.__init__(self, game, x, y, 5, fps = 4)
         self.mana = 0
-        self.hp = 5
+        self.hp = 3
+        self.hp_max = 3
         idle = SpriteSheet("will.png", (2, 1), 2)
         hurt = SpriteSheet("will_damage.png", (1, 1), 1)
         self.sprite.add_animation({"Idle": idle})
@@ -24,7 +25,8 @@ class Player(GameObject):
         self.macro_tiles = [Up(editor = self.game.editor),
             Down(editor = self.game.editor),
             Left(editor = self.game.editor),
-            Right(editor = self.game.editor)]
+            Right(editor = self.game.editor),
+            AttackUp(editor = self.game.editor)]
         self.game.editor.populate(self.macro_tiles)
 
         # TODO make this dependent on weapon?
@@ -34,7 +36,7 @@ class Player(GameObject):
         GameObject.update(self, dt)
         if self.blink < 0.25 and self.blink >= 0:
             self.blink += dt
-        elif self.blink >= 0.25:
+        elif self.blink >= 0:
             self.sprite.start_animation("Idle")
             self.blink = -1
 

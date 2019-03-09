@@ -28,13 +28,34 @@ class Game(object):
         self.player = Player(self, spawn[0][0], spawn[0][1])
         self.turn_queue = []
         self.command_font = pygame.font.SysFont("monospace", 12)
-        self.command_renders = {}
         self.command_rectangles = {}
         test_macro = Macro()
         test_macro.add_block(Right())
         test_macro.add_block(AttackRight())
         test_macro.add_block(Left())
         self.player.macros[0] = test_macro
+        FlameSpawner(self, 7, 3)
+        GroundHazard_Fixed(self, 5, 5)
+
+        self.heart = pygame.image.load("heart.png")
+        self.hheart = pygame.image.load("half_heart.png")
+        self.eheart = pygame.image.load("empty_heart.png")
+        self.heart_width = self.heart.get_width()
+
+
+    def render_health(self, surf):
+        hp = self.player.hp
+        xoff = 10
+        yoff = 10
+        xspace = 20
+        for i in range(self.player.hp_max):
+            if hp <= 0:
+                surf.blit(self.eheart, (xoff + xspace*i, yoff))
+            elif hp <= 0.5:
+                surf.blit(self.hheart, (xoff + xspace*i, yoff))
+            else:
+                surf.blit(self.heart, (xoff + xspace*i, yoff))
+            hp -= 1
 
 
     def handle_events(self, events):
@@ -127,6 +148,7 @@ class Game(object):
             self.draw_map()
             #self.player.draw(self.screen)
             #self.terminal.draw(self.screen)
+            self.render_health(self.screen)
             self.editor.draw(self.screen)
             self.update_screen()
             self.draw_fps(real_dt)   #   TODO remove from final build
