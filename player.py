@@ -7,8 +7,11 @@ class Player(GameObject):
     def __init__(self, game, x, y):
         GameObject.__init__(self, game, x, y, 5, fps = 4)
         self.mana = 0
+        self.hp = 5
         idle = SpriteSheet("will.png", (2, 1), 2)
+        hurt = SpriteSheet("will_damage.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
+        self.sprite.add_animation({"Hurt": hurt})
         self.sprite.start_animation("Idle")
         self.slash = Slash(self.game, 0, 0)
         self.game.movers += [self]
@@ -21,11 +24,12 @@ class Player(GameObject):
 
     def update(self, dt):
         GameObject.update(self, dt)
-        
+
     def draw(self, surf):
         GameObject.draw(self, surf)
-        
+
     def translate(self, dx, dy, attack=True):
+        self.sprite.start_animation("Idle")
         if attack and self.attack(dx, dy):
             return True # Able to hit enemy
         if self.map.get((self.x+dx, self.y+dy), ("layer", 4), ("hittable", True)):
@@ -34,6 +38,7 @@ class Player(GameObject):
 
     def attack(self, dx, dy, swing_miss=False):
         # TODO generalize this for different weapon types/interactions
+        self.sprite.start_animation("Idle")
         things_hit = self.game.map.get((self.x + dx, self.y + dy), "hittable")
         if len(things_hit) and abs(dx) > 0:
             self.flipped = dx < 0
@@ -50,6 +55,9 @@ class Player(GameObject):
 
     def swing(self, dx, dy):
         self.slash.start_slash(self.x+dx, self.y+dy, (dx, dy))
-        
 
-
+    def take_damage(self, damage):
+        self.game.camera.shake()
+        self.hp -= damage
+        print("Oof!")
+        self.sprite.start_animation("Hurt")
