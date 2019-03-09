@@ -24,7 +24,8 @@ class Player(GameObject):
         self.macro_tiles = [Up(editor = self.game.editor),
             Down(editor = self.game.editor),
             Left(editor = self.game.editor),
-            Right(editor = self.game.editor)]
+            Right(editor = self.game.editor),
+            AttackUp(editor = self.game.editor)]
         self.game.editor.populate(self.macro_tiles)
 
         # TODO make this dependent on weapon?
@@ -32,9 +33,9 @@ class Player(GameObject):
 
     def update(self, dt):
         GameObject.update(self, dt)
-        if self.blink < 0.25 and self.blink >= 0:
+        if self.blink < 0.25:
             self.blink += dt
-        elif self.blink >= 0.25:
+        elif self.blink >= 0:
             self.sprite.start_animation("Idle")
             self.blink = -1
 
