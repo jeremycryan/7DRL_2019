@@ -2,6 +2,8 @@ from game_object import GameObject
 import ai
 import random
 from sprite_tools import *
+from constants import *
+
 
 class Enemy(GameObject):
 
@@ -34,11 +36,14 @@ class Enemy(GameObject):
 
     def translate(self, dx, dy):
         players = self.map.get((self.x+dx, self.y+dy), ("layer", 5))
+        avoid = self.map.get((self.x+dx, self.y+dy), ("avoid"))
         if players:
             self.hit(players[0])
             if abs(dx) > 0:
                 self.flipped = dx < 0
             return True
+        if avoid:
+            return False
         return GameObject.translate(self, dx, dy)
 
     def die(self):
@@ -98,7 +103,7 @@ class Bit(Enemy):
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
 
-class FlameSpawner(Enemy):
+class FlameSpawner(Enemy): #Needs art, flame dude
 
     def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=0, behavior=ai.approach_player_smart_minelay, hp = 1)
@@ -109,14 +114,24 @@ class FlameSpawner(Enemy):
     def spawn(self, x, y):
         GroundHazard(self.game, x, y)
 
-class GroundHazard(Enemy):
+class GroundHazard(Enemy): #Needs art, flame
 
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard, hp = 3)
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard, hp = 5)
         idle = SpriteSheet("bit.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
-        
-    #def loseHp(self):
+        self.hittable = False
+        self.layer = FLOOR_DETAIL_LAYER
+        self.avoid = True
 
-        
+class GroundHazard_Fixed(Enemy): #Needs art, spikes
+
+    def __init__(self, game, x, y):
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard_fixed, hp = 1)
+        idle = SpriteSheet("bit.png", (2, 1), 2)
+        self.sprite.add_animation({"Idle": idle})
+        self.sprite.start_animation("Idle")
+        self.hittable = False
+        self.layer = FLOOR_DETAIL_LAYER
+
