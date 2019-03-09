@@ -16,9 +16,9 @@ class Game(object):
 
     def __init__(self):
         pygame.init()
-        self.editor = Editor()
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
+        self.editor = Editor()
         self.movers = []
         self.effects = []
         self.camera = Camera()
@@ -74,7 +74,6 @@ class Game(object):
                 enemies = self.movers[:]
                 enemies.remove(self.player)
                 self.turn_queue = [self.player] + enemies
-                self.player.mana += 1
                 for mover in self.turn_queue:
                     mover.turns = 1
             else:
@@ -97,13 +96,14 @@ class Game(object):
             # Drawing goes here
             # TODO remove fill functions once screen is completely filled with tiles
             self.screen.fill((0, 0, 0))
-            for obj in self.movers + self.effects:
+            for obj in self.movers + self.effects + [self.editor]:
                 obj.update(dt)
             self.update_camera_target()
             #self.map.update(dt, (0, 30), (0, 30))
             self.draw_map()
             #self.player.draw(self.screen)
             #self.terminal.draw(self.screen)
+            self.editor.draw(self.screen)
             self.update_screen()
             self.draw_fps(real_dt)   #   TODO remove from final build
             #self.draw_commands(self.screen_blit)
@@ -167,6 +167,7 @@ class Game(object):
             self.delay += 0.05
             if end_turn:
                 self.player.turns -= 1
+                self.player.mana += 1
 
 
 class Terminal(object):
@@ -212,15 +213,17 @@ class Terminal(object):
                 elif event.key == pygame.K_z:
                     if self.game.player in self.game.turn_queue:
                         self.game.player.macro = self.game.test_macro
-
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key in KEYDICT:
-                    self.text += KEYDICT[event.key]
-                elif event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]
-                elif event.key == pygame.K_RETURN:
-                    self.execute()
+                elif event.key == pygame.K_e:
+                    self.game.editor.toggle()
+        #
+        # for event in events:
+        #     if event.type == pygame.KEYDOWN:
+        #         if event.key in KEYDICT:
+        #             self.text += KEYDICT[event.key]
+        #         elif event.key == pygame.K_BACKSPACE:
+        #             self.text = self.text[:-1]
+        #         elif event.key == pygame.K_RETURN:
+        #             self.execute()
         if self.text == " ": self.text = ""
         self.update_text_render()
 

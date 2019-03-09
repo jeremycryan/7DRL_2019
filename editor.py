@@ -7,15 +7,18 @@ import sys
 
 class Editor(object):
 
-    def __init__(self):
+    def __init__(self, populate_demo=False):
         self.window_surf = pygame.image.load("editor_window.png")
         self.window_x = pygame.image.load("editor_x.png")
         self.window_xw = self.window_x.get_width()
         self.window_xh = self.window_x.get_height()
-        self.macro_tiles = []#[MacroTile(self, 0, 0, idx = 0, path= "move_left_tile"),
-                            #MacroTile(self, 0, 0, idx = 1, path= "move_up_tile"),
-                            #MacroTile(self, 0, 0, idx = 2, path= "move_down_tile"),
-                            #MacroTile(self, 0, 0, idx = 3, path= "move_right_tile")]
+        self.macro_tiles = []
+
+        if populate_demo:
+            self.macro_tiles = [MacroTile(self, 0, 0, idx = 0, path= "move_left_tile"),
+                            MacroTile(self, 0, 0, idx = 1, path= "move_up_tile"),
+                            MacroTile(self, 0, 0, idx = 2, path= "move_down_tile"),
+                            MacroTile(self, 0, 0, idx = 3, path= "move_right_tile")]
         self.draw_order = [item for item in self.macro_tiles]
         self.tile_containers = []
         cnum = 3
@@ -28,29 +31,67 @@ class Editor(object):
 
         self.y = WINDOW_HEIGHT
         self.target_y = 0
+        self.active = False
+        self.shown = False
+
+        self.black = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT)).convert()
+        self.black.fill((0, 0, 0))
+        self.black.set_alpha(255)
+
+    def populate(self, blocks):
+        self.macro_tiles = [item.tile for item in blocks]
+        self.draw_order = [item.tile for item in blocks]
+        self.carrying = []
+
+        for item in self.tile_containers:
+            item.tiles = []
+
+    def show(self):
+        self.active = True
+        self.target_y = 0
+        self.y = WINDOW_HEIGHT
+        self.shown = True
+
+    def hide(self):
+        self.target_y = WINDOW_HEIGHT + 5
+        self.shown = False
+
+    def toggle(self):
+        if self.shown:
+            self.hide()
+        else:
+            self.show()
 
     def draw(self, surf):
 
-        surf.blit(self.window_surf, (0, self.y))
-        surf.blit(self.window_x, (206, self.y + 10))
-        for c in self.tile_containers:
-            c.draw(surf, eyoff = self.y)
-        for tile in self.draw_order:
-            tile.draw(surf, eyoff = self.y)
+        if self.active:
+            self.black.set_alpha((255 - 255*self.y/WINDOW_HEIGHT)/2)
+            surf.blit(self.black, (0, 0))
+            surf.blit(self.window_surf, (0, self.y))
+            surf.blit(self.window_x, (206, self.y + 10))
+            for c in self.tile_containers:
+                c.draw(surf, eyoff = self.y)
+            for tile in self.draw_order:
+                tile.draw(surf, eyoff = self.y)
 
     def update(self, dt):
 
-        dy = self.target_y - self.y
-        self.y += dy * dt * 10
+        if self.active:
+            dy = self.target_y - self.y
+            self.y += dy * dt * 10
 
-        for tile in self.macro_tiles:
-            tile.update(dt)
+            for tile in self.macro_tiles:
+                tile.update(dt)
+
+        if self.y > WINDOW_HEIGHT:
+            self.active = False
 
 
     def container_at(self, pos):
 
         for c in self.tile_containers:
             c.hovered = False
+        for c in self.tile_containers:
             if pos[0] >= c.x and pos[0] <= c.x + self.container_width:
                 if pos[1] >= c.y and pos[1] <= c.y + self.container_height:
                     c.hovered = True
@@ -161,10 +202,6 @@ class MacroTile(object):
             self.tx = x - self.w/2
             self.ty = y - self.h/2
             self.editor.container_at((x, y))
-        else:
-            for c in self.editor.tile_containers:
-                if not c.tiles:
-                    c.hovered = False
 
 
     def draw(self, surf, eyoff = 0):
@@ -219,7 +256,10 @@ class MacroTile(object):
 if __name__=="__main__":
 
     a = pygame.display.set_mode(BLIT_SIZE)
-    e = Editor()
+    e = Editor(populate_demo=True)
+    e.show()
+
+
     blit = pygame.Surface(WINDOW_SIZE)
 
     then = time.time()

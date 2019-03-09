@@ -1,6 +1,7 @@
 from game_object import *
 from constants import *
 from sprite_tools import *
+from block import *
 
 class Player(GameObject):
 
@@ -15,15 +16,21 @@ class Player(GameObject):
         self.game.effects += [self.slash]
         self.macro = None
 
+        self.macro_tiles = [Up(editor = self.game.editor),
+            Down(editor = self.game.editor),
+            Left(editor = self.game.editor), 
+            Right(editor = self.game.editor)]
+        self.game.editor.populate(self.macro_tiles)
+
         # TODO make this dependent on weapon?
         self.attack_damage = 1
 
     def update(self, dt):
         GameObject.update(self, dt)
-        
+
     def draw(self, surf):
         GameObject.draw(self, surf)
-        
+
     def translate(self, dx, dy, attack=True):
         if attack and self.attack(dx, dy):
             return True # Able to hit enemy
@@ -49,6 +56,3 @@ class Player(GameObject):
 
     def swing(self, dx, dy):
         self.slash.start_slash(self.x+dx, self.y+dy, (dx, dy))
-        
-
-
