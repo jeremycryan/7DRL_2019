@@ -187,5 +187,6 @@ class Bomb(Enemy): #Needs art, bomb
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
         self.hittable = False
+        self.avoid = True
         self.layer = FLOOR_DETAIL_LAYER
 

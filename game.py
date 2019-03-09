@@ -30,8 +30,6 @@ class Game(object):
         test_macro.add_block(AttackRight())
         test_macro.add_block(Left())
         self.player.macros[0] = test_macro
-        FlameSpawner(self, 7, 3)
-        GroundHazard_Fixed(self, 5, 5)
 
         self.heart = pygame.image.load("heart.png")
         self.hheart = pygame.image.load("half_heart.png")
@@ -118,22 +116,25 @@ class Game(object):
                 for mover in self.turn_queue:
                     mover.turns = 1
             else:
-                mover = self.turn_queue[0]
-                if mover is self.player:
-                    if mover.turns <= 0: # end player turn
-                        self.turn_queue.remove(mover)
-                    elif mover.macro: # run player macro
-                        if mover.macro.run(self, mover): # end macro
-                            mover.macro = None
-                            mover.turns = 0
-                else:
-                    mover.turns -= 1
-                    if mover.turns <= 0: # end enemy turn
-                        self.turn_queue.remove(mover)
-                    if self.map.on_screen(self.camera, mover.x, mover.y):
-                        if mover in self.movers: # move enemy
-                            mover.move()
-
+                while len(self.turn_queue) > 0:
+                    mover = self.turn_queue[0]
+                    if mover is self.player:
+                        if mover.turns <= 0: # end player turn
+                            self.turn_queue.remove(mover)
+                        elif mover.macro: # run player macro
+                            if mover.macro.run(self, mover): # end macro
+                                mover.macro = None
+                                mover.turns = 0
+                        break
+                    else:
+                        mover.turns -= 1
+                        if mover.turns <= 0: # end enemy turn
+                            self.turn_queue.remove(mover)
+                        if self.map.on_screen(self.camera, mover.x, mover.y):
+                            if mover in self.movers: # move enemy
+                                mover.move()
+                        if self.delay > 0:
+                            break
             # Drawing goes here
             # TODO remove fill functions once screen is completely filled with tiles
             self.screen.fill((0, 0, 0))

@@ -107,12 +107,12 @@ class Map(object):
                 if not self.get((x,y)):
                     Wall(game, x, y)
         # Spawn enemies
-        self.populate_enemies(game, difficulty)
         if random.random() < 0.5:
             seeds.sort(key=lambda x: x[1])
         if random.random() < 0.5:
             seeds = seeds[::-1]
         Stairs(game, seeds[-1][0], seeds[-1][1])
+        self.populate_enemies(game, seeds[0], difficulty)
         return seeds[0]
 
     def clear_path(self, game, s1, s2):
@@ -129,23 +129,26 @@ class Map(object):
                 y += 1 if dy>0 else -1
         
 
-    def populate_enemies(self, game, difficulty=1):
+    def populate_enemies(self, game, spawn, difficulty=1):
         for x in range(1, len(self.cells)-1):
             for y in range(1, len(self.cells[0])-1):
+                if abs(spawn[0] - x) < 3 and abs(spawn[1] - y) < 3:
+                    continue
                 if not self.get((x,y), "blocking"):
-                    r = random.random()
-                    if r < 0.015:
-                        Bug(game, x, y)
-                    elif r < 0.03:
-                        Ebat(game, x, y)
-                    elif r < 0.04:
-                        Bit(game, x, y)
-                   # elif r < 0.045:
-                   #     FlameSpawner(game, x, y)
-                   # elif r < 0.05:
-                   #     GroundHazard_Fixed(game, x, y)
-                   # elif r < 0.055:
-                   #     Bomb(game, x, y)
+                    if len(self.get((x,y)))==1:
+                        r = random.random()
+                        if r < 0.015:
+                            Bug(game, x, y)
+                        elif r < 0.03:
+                            Ebat(game, x, y)
+                        elif r < 0.04:
+                            Bit(game, x, y)
+                        elif r < 0.045:
+                            FlameSpawner(game, x, y)
+                        elif r < 0.05:
+                            GroundHazard_Fixed(game, x, y)
+                        elif r < 0.055:
+                            Bomb(game, x, y)
 
 
     def add_to_cell(self, new_item, pos):
