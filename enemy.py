@@ -42,7 +42,7 @@ class Enemy(GameObject):
     def draw_hp(self, surf, x, y):
         if self.hp_visible:
             if self.hp < self.max_hp:
-                x_start = x
+                x_start = x - self.heart_width/2 * self.max_hp
                 y_start = y
                 x_space = self.heart_width
                 hp = self.hp
