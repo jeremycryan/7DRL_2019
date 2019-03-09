@@ -23,9 +23,9 @@ class Game(object):
         self.effects = []
         self.camera = Camera()
         self.map = Map((30, 30))
-        self.map.populate_rooms(self)
+        spawn = self.map.populate_path(self)
         self.delay = 0
-        self.player = Player(self, 2, 2)
+        self.player = Player(self, spawn[0][0], spawn[0][1])
         self.turn_queue = []
         self.command_font = pygame.font.SysFont("monospace", 12)
         self.command_renders = {}
