@@ -83,12 +83,12 @@ class Map(object):
                         Ebat(game, x, y)
                     elif r < 0.04:
                         Bit(game, x, y)
-                    elif r < 0.045:
-                        FlameSpawner(game, x, y)
-                    elif r < 0.05:
-                        GroundHazard_Fixed(game, x, y)
-                    elif r < 0.055:
-                        Bomb(game, x, y)
+                   # elif r < 0.045:
+                   #     FlameSpawner(game, x, y)
+                   # elif r < 0.05:
+                   #     GroundHazard_Fixed(game, x, y)
+                   # elif r < 0.055:
+                   #     Bomb(game, x, y)
 
 
     def add_to_cell(self, new_item, pos):
