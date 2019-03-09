@@ -35,6 +35,8 @@ class Game(object):
         test_macro.add_block(AttackRight())
         test_macro.add_block(Left())
         self.player.macros[0] = test_macro
+        FlameSpawner(self, 7, 3)
+        GroundHazard_Fixed(self, 5, 5)
 
 
     def handle_events(self, events):
