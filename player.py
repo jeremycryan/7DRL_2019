@@ -13,6 +13,7 @@ class Player(GameObject):
         self.slash = Slash(self.game, 0, 0)
         self.game.movers += [self]
         self.game.effects += [self.slash]
+        self.macros = [None, None, None]
         self.macro = None
 
         # TODO make this dependent on weapon?
