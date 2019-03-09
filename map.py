@@ -40,8 +40,8 @@ class Map(object):
         for y in range(ymax):
             Wall(game, 0, y)
             Wall(game, xmax-1, y)
-        for x in range(1, 4):
-            for y in range(1, 4):
+        for x in range(1, 6):
+            for y in range(1, 6):
                 Tile(game, x, y)
 
 
@@ -77,12 +77,18 @@ class Map(object):
             for y in range(1, len(self.cells[0])-1):
                 if not self.get((x,y), "blocking"):
                     r = random.random()
-                    if r < 0.02:
+                    if r < 0.015:
                         Bug(game, x, y)
-                    elif r < 0.04:
+                    elif r < 0.03:
                         Ebat(game, x, y)
-                    elif r < 0.05:
+                    elif r < 0.04:
                         Bit(game, x, y)
+                   # elif r < 0.045:
+                   #     FlameSpawner(game, x, y)
+                   # elif r < 0.05:
+                   #     GroundHazard_Fixed(game, x, y)
+                   # elif r < 0.055:
+                   #     Bomb(game, x, y)
 
 
     def add_to_cell(self, new_item, pos):

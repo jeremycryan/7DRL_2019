@@ -20,7 +20,8 @@ class Editor(object):
             self.macro_tiles = [MoveUp(self, idx = 0),
                                 MoveDown(self, idx = 1),
                                 MoveLeft(self, idx = 2),
-                                MoveRight(self, idx = 3),]
+                                MoveRight(self, idx = 3)]
+
         self.draw_order = [item for item in self.macro_tiles]
         self.tile_containers = []
         cnum = 3

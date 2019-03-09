@@ -10,7 +10,7 @@ class Player(GameObject):
         self.mana = 0
         self.hp = 5
         idle = SpriteSheet("will.png", (2, 1), 2)
-        hurt = SpriteSheet("will_damage.png", (2, 1), 2)
+        hurt = SpriteSheet("will_damage.png", (1, 1), 1)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.add_animation({"Hurt": hurt})
         self.sprite.start_animation("Idle")
@@ -19,6 +19,7 @@ class Player(GameObject):
         self.game.effects += [self.slash]
         self.macros = [None, None, None]
         self.macro = None
+        self.blink = -1
 
         self.macro_tiles = [Up(editor = self.game.editor),
             Down(editor = self.game.editor),
@@ -31,6 +32,11 @@ class Player(GameObject):
 
     def update(self, dt):
         GameObject.update(self, dt)
+        if self.blink < 0.25 and self.blink >= 0:
+            self.blink += dt
+        elif self.blink >= 0.25:
+            self.sprite.start_animation("Idle")
+            self.blink = -1
 
     def draw(self, surf):
         GameObject.draw(self, surf)
@@ -39,7 +45,7 @@ class Player(GameObject):
         self.sprite.start_animation("Idle")
         if attack and self.attack(dx, dy):
             return True # Able to hit enemy
-        if self.map.get((self.x+dx, self.y+dy), ("layer", 4)):
+        if self.map.get((self.x+dx, self.y+dy), ("layer", 4), ("hittable", True)):
             return False # Enemy blocking square
         return GameObject.translate(self, dx, dy)
 
@@ -68,3 +74,4 @@ class Player(GameObject):
         self.hp -= damage
         print("Oof!")
         self.sprite.start_animation("Hurt")
+        self.blink = 0
