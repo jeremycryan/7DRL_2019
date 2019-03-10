@@ -45,8 +45,16 @@ class Editor(object):
         self.macro_tiles = [item for item in blocks]
         self.draw_order = [item for item in blocks]
         self.carrying = []
-
+        for item in blocks:
+            item.in_container = False
+            item.scale = 0.5
+            item.target_scale = 0.5
+            item.ty = 125
+            item.tx = 30*self.macro_tiles.index(item) + 50
+            item.x = item.tx
+            item.y = item.ty
         for item in self.tile_containers:
+            item.hovered = False
             item.tiles = []
 
     def show(self):
@@ -54,6 +62,7 @@ class Editor(object):
         self.target_y = 0
         self.y = WINDOW_HEIGHT
         self.shown = True
+        self.populate(self.macro_tiles)
 
     def hide(self):
         self.target_y = WINDOW_HEIGHT + 5

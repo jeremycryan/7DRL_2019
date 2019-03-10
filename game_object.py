@@ -55,7 +55,10 @@ class GameObject(object):
         self.vy = dy
         self.hop = 1
         if self.map.get((self.x, self.y), "stairs"):
-            self.game.level_up()
+            self.game.end_level()
+        items = self.map.get((self.x, self.y), ("layer",ITEM_LAYER))
+        if items:
+            self.collect(items)
         return True
 
     def collide(self, x, y):
@@ -73,6 +76,10 @@ class GameObject(object):
 
     def get_hop(self):
         return -int(4*HOP*((abs(self.hop)-0.5)**2-0.25))
+
+    def collect(self, items):
+        for item in items:
+            self.map.remove_from_cell(item, (self.x, self.y))
 
 
 class Slash(GameObject):
