@@ -55,7 +55,7 @@ class GameObject(object):
         self.vy = dy
         self.hop = 1
         if self.map.get((self.x, self.y), "stairs"):
-            self.game.level_up()
+            self.game.end_level()
         items = self.map.get((self.x, self.y), ("layer",ITEM_LAYER))
         if items:
             self.collect(items)

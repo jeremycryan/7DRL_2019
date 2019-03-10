@@ -80,3 +80,5 @@ class Player(GameObject):
         self.hp -= damage
         self.sprite.start_animation("Hurt")
         self.blink = 0
+        if self.hp <= 0:
+            self.game.end_level()

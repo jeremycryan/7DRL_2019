@@ -77,7 +77,7 @@ class Enemy(GameObject):
         #TODO death animation
         self.game.map.remove_from_cell(self, (self.x, self.y))
         self.game.movers.remove(self)
-        if self.layer == 4 and random.random() < 0.1:
+        if self.layer == 4 and random.random() < 0.12:
             self.drop_item()
 
     def drop_item(self, value=1):

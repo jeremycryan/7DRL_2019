@@ -21,6 +21,7 @@ class Game(object):
         self.editor = Editor()
         self.player = Player(self, 0, 0)
         self.camera = Camera()
+        self.level = 0
 
         self.black_screen = pygame.Surface(WINDOW_SIZE).convert()
         self.black_screen.fill((0, 0, 0))
@@ -171,7 +172,10 @@ class Game(object):
             self.black_alpha = max(0, self.black_alpha - rate*dt)
 
         if self.black_alpha == 255 and self.black_shade == UP:
-            self.load_level()
+            if self.player.hp > 0:
+                self.load_level()
+            else:
+                self.load_level(game_over=True)
 
 
     def draw_map(self):
@@ -224,14 +228,20 @@ class Game(object):
                 if self.player.turns <= 0: # end player turn
                     self.turn_queue.remove(self.player)
 
-    def level_up(self):
+    def end_level(self):
         self.black_shade = UP
 
-    def load_level(self, difficulty=1):
+    def load_level(self, game_over=False):
+        if game_over:
+            self.level = 0
+            self.editor = Editor()
+            self.player = Player(self, 0, 0)
+        else:
+            self.level += 1
         self.movers = [self.player]
         self.effects = [self.player.slash]
         self.map = Map((30, 30))        
-        spawn = self.map.populate_path(self, difficulty)
+        spawn = self.map.populate_path(self, self.level)
         self.player.x = spawn[0]
         self.player.y = spawn[1]
         self.player.map = self.map
