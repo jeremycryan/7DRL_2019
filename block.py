@@ -7,6 +7,7 @@ class MacroTile(object):
         if not path:
             return
         self.set_surf_from_path(path)
+        self.path = path
         self.y = 125
 
         self.x = 30 * idx + 50
@@ -122,7 +123,7 @@ class MacroTile(object):
             self.remove_from_container()
 
 class Block (MacroTile):
-    def __init__(self, path="", cost=1, duration=0, delay=0.05, editor=None, idx=0):
+    def __init__(self, path="", cost=1, duration=0, delay=0.25, editor=None, idx=0):
         MacroTile.__init__(self, editor, idx=idx, path=path)
         self.cost = cost
         self.duration = duration

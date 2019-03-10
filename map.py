@@ -2,6 +2,8 @@ from game_object import GameObject
 from sprite_tools import *
 import random
 from enemy import *
+from item import *
+from block import *
 from constants import *
 
 class Map(object):

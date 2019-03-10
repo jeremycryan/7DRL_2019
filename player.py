@@ -2,6 +2,7 @@ from game_object import *
 from constants import *
 from sprite_tools import *
 from block import *
+from item import *
 
 class Player(GameObject):
 
@@ -17,15 +18,12 @@ class Player(GameObject):
         self.sprite.add_animation({"Hurt": hurt})
         self.sprite.start_animation("Idle")
         self.slash = Slash(self.game, 0, 0)
+        self.blocks = []
         self.macros = [None, None, None]
         self.macro = None
         self.blink = -1
 
-        self.macro_tiles = [Up(editor = self.game.editor),
-            Down(editor = self.game.editor),
-            Left(editor = self.game.editor),
-            Right(editor = self.game.editor),
-            AttackUp(editor = self.game.editor)]
+        self.macro_tiles = []
         self.game.editor.populate(self.macro_tiles)
 
         # TODO make this dependent on weapon?
@@ -49,6 +47,13 @@ class Player(GameObject):
         if self.map.get((self.x+dx, self.y+dy), ("layer", 4), ("hittable", True)):
             return False # Enemy blocking square
         return GameObject.translate(self, dx, dy)
+
+    def collect(self, items):
+        for item in items:
+            self.map.remove_from_cell(item, (self.x, self.y))
+            if isinstance(item, BlockItem):
+                self.blocks += [item.block]
+                self.game.editor.populate(self.blocks)
 
     def attack(self, dx, dy, swing_miss=False):
         # TODO generalize this for different weapon types/interactions

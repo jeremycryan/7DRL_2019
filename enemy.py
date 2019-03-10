@@ -3,6 +3,8 @@ import ai
 import random
 from sprite_tools import *
 from constants import *
+from item import *
+from block import *
 import pygame
 
 
@@ -75,6 +77,27 @@ class Enemy(GameObject):
         #TODO death animation
         self.game.map.remove_from_cell(self, (self.x, self.y))
         self.game.movers.remove(self)
+        if self.layer == 4 and random.random() < 0.1:
+            self.drop_item()
+
+    def drop_item(self, value=1):
+        r = random.randint(0,7)
+        if r == 0:
+            BlockItem(self.game, self.x, self.y, Left(editor=self.game.editor))
+        elif r == 1:
+            BlockItem(self.game, self.x, self.y, Right(editor=self.game.editor))
+        elif r == 2:
+            BlockItem(self.game, self.x, self.y, Up(editor=self.game.editor))
+        elif r == 3:
+            BlockItem(self.game, self.x, self.y, Down(editor=self.game.editor))
+        elif r == 4:
+            BlockItem(self.game, self.x, self.y, AttackLeft(editor=self.game.editor))
+        elif r == 5:
+            BlockItem(self.game, self.x, self.y, AttackRight(editor=self.game.editor))
+        elif r == 6:
+            BlockItem(self.game, self.x, self.y, AttackUp(editor=self.game.editor))
+        elif r == 7:
+            BlockItem(self.game, self.x, self.y, AttackDown(editor=self.game.editor))
 
     def take_damage(self, amt):
         self.hp -= amt

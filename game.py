@@ -65,6 +65,8 @@ class Game(object):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
+                if self.black_shade == UP:
+                    return
                 if event.key == pygame.K_UP or event.key == pygame.K_w :
                     self.move_player(0, -1)
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
@@ -219,6 +221,8 @@ class Game(object):
             if end_turn:
                 self.player.turns -= 1
                 self.player.mana = min(self.player.mana_max, self.player.mana + 1)
+                if self.player.turns <= 0: # end player turn
+                    self.turn_queue.remove(self.player)
 
     def level_up(self):
         self.black_shade = UP
@@ -236,6 +240,7 @@ class Game(object):
         self.turn_queue = []
         self.player.sprite.x_pos = self.player.x * TILE_SIZE
         self.player.sprite.y_pos = self.player.y * TILE_SIZE
+        self.player.macro = False
         
         self.black_shade = DOWN
         self.black_alpha = 255.0
