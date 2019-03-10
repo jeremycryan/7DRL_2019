@@ -19,11 +19,9 @@ class Game(object):
         pygame.init()
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
-        
-        character = CharacterSelect(self.screen_blit).sel
-        
         self.editor = Editor()
-        self.player = Player(self, 0, 0, idx=character)
+        sel = CharacterSelect(self.screen_blit).sel
+        self.player = Player(self, 0, 0, idx = sel)
         self.camera = Camera()
         self.level = 0
 
@@ -37,11 +35,11 @@ class Game(object):
         self.delay = 0
         self.command_font = pygame.font.SysFont("monospace", 12)
         self.command_rectangles = {}
-        test_macro = Macro()
-        test_macro.add_block(Right())
-        test_macro.add_block(AttackRight())
-        test_macro.add_block(Left())
-        self.player.macros[0] = test_macro
+        #test_macro = Macro()
+        #test_macro.add_block(Right())
+        #test_macro.add_block(AttackRight())
+        #test_macro.add_block(Left())
+        #self.player.macros[0] = test_macro
 
         self.heart = pygame.image.load("heart.png")
         self.hheart = pygame.image.load("half_heart.png")
