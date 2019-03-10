@@ -5,14 +5,16 @@ from block import *
 
 class Player(GameObject):
 
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, idx = 0):
         GameObject.__init__(self, game, x, y, 5, fps = 4)
         self.mana = 0
         self.mana_max = 3
         self.hp = 3
         self.hp_max = 3
-        idle = SpriteSheet("will.png", (2, 1), 2)
-        hurt = SpriteSheet("will_damage.png", (1, 1), 1)
+        names = ["will", "nick", "vicky", "prava"]
+        name = names[idx]
+        idle = SpriteSheet(name + ".png", (2, 1), 2)
+        hurt = SpriteSheet(name + "_damage.png", (1, 1), 1)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.add_animation({"Hurt": hurt})
         self.sprite.start_animation("Idle")

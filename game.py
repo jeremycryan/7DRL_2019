@@ -11,6 +11,7 @@ from block import *
 from player import Player
 from enemy import *
 from editor import *
+from character_select import *
 
 class Game(object):
 
@@ -18,8 +19,11 @@ class Game(object):
         pygame.init()
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
+        
+        character = CharacterSelect(self.screen_blit).sel
+        
         self.editor = Editor()
-        self.player = Player(self, 0, 0)
+        self.player = Player(self, 0, 0, idx=character)
         self.camera = Camera()
 
         self.black_screen = pygame.Surface(WINDOW_SIZE).convert()
