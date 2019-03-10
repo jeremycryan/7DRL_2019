@@ -146,10 +146,19 @@ class Ebat(Enemy):
 class Bit(Enemy):
 
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.charge_player, hp = 1)
-        idle = SpriteSheet("bit.png", (2, 1), 2)
-        self.sprite.add_animation({"Idle": idle})
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.charge_player, hp = 3)
+        idle = SpriteSheet("ram.png", (2, 1), 2)
+        charging = SpriteSheet("ram_charge.png", (2, 1), 2)
+        self.sprite.add_animation({"Idle": idle, "Charging": charging})
         self.sprite.start_animation("Idle")
+        self.charging = False
+
+    def draw(self, surf):
+        self.sprite.y_pos -= 5
+        self.sprite.x_pos -= 3
+        Enemy.draw(self, surf)
+        self.sprite.x_pos += 3
+        self.sprite.y_pos += 5
 
 class FlameSpawner(Enemy): #Needs art, flame dude
 

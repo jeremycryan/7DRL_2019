@@ -9,7 +9,7 @@ class Player(GameObject):
     def __init__(self, game, x, y, idx = 0):
         GameObject.__init__(self, game, x, y, 5, fps = 4)
         self.mana = 0
-        self.mana_max = 3
+        self.mana_max = 5
         self.hp = 3
         self.hp_max = 3
         names = ["will", "nick", "vicky", "prava"]

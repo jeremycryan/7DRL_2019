@@ -20,8 +20,8 @@ class Game(object):
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
         self.editor = Editor()
-        sel = CharacterSelect(self.screen_blit).sel
-        self.player = Player(self, 0, 0, idx = sel)
+        self.sel = CharacterSelect(self.screen_blit).sel
+        self.player = Player(self, 0, 0, idx = self.sel)
         self.camera = Camera()
         self.level = 0
 
@@ -35,19 +35,36 @@ class Game(object):
         self.delay = 0
         self.command_font = pygame.font.SysFont("monospace", 12)
         self.command_rectangles = {}
-        #test_macro = Macro()
-        #test_macro.add_block(Right())
-        #test_macro.add_block(AttackRight())
-        #test_macro.add_block(Left())
-        #self.player.macros[0] = test_macro
+        test_macro = Macro()
+        test_macro.add_block(Right())
+        test_macro.add_block(AttackRight())
+        test_macro.add_block(Left())
+        self.player.macros[0] = test_macro
 
         self.heart = pygame.image.load("heart.png")
         self.hheart = pygame.image.load("half_heart.png")
         self.eheart = pygame.image.load("empty_heart.png")
         self.heart_width = self.heart.get_width()
 
+        self.mana_bar = pygame.image.load("mana_outer_bar.png")
+        self.mana_fill = pygame.image.load("mana_inner_bar.png")
+        self.display_mana = self.player.mana
 
+
+    def update_mana_bar(self, dt):
+        dm = self.player.mana - self.display_mana
+        self.display_mana += dm * dt * 20.0
+        
+	
     def render_health(self, surf):
+
+        mana = self.player.mana
+        max_mana = self.player.mana_max
+        surf.blit(self.mana_bar, (11, 30))
+        new_width = int(self.display_mana*53//max_mana + 0.5)
+        mana_fill = pygame.transform.scale(self.mana_fill, (new_width, self.mana_fill.get_height()))
+        surf.blit(mana_fill, (14, 33))
+        
         hp = self.player.hp
         xoff = 10
         yoff = 10
@@ -163,6 +180,7 @@ class Game(object):
             self.render_health(self.screen)
             self.editor.draw(self.screen)
             self.update_black_screen(dt)
+            self.update_mana_bar(dt)
             self.update_screen()
             self.draw_fps(real_dt)   #   TODO remove from final build
             pygame.display.flip()
@@ -239,7 +257,7 @@ class Game(object):
         if game_over:
             self.level = 0
             self.editor = Editor()
-            self.player = Player(self, 0, 0)
+            self.player = Player(self, 0, 0, self.sel)
         else:
             self.level += 1
         self.movers = [self.player]
