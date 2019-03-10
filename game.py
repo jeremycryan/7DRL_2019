@@ -76,6 +76,8 @@ class Game(object):
                     self.move_player(-1, 0)
                 elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.move_player(1, 0)
+                elif event.key == pygame.K_SPACE:
+                    self.move_player(0, 0)
                 elif event.key == pygame.K_e:
                     self.editor.toggle()
                 elif event.key == pygame.K_z:
