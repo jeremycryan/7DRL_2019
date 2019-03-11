@@ -222,3 +222,11 @@ class Bomb(Enemy): #Needs art, bomb
         self.avoid = True
         self.layer = FLOOR_DETAIL_LAYER
 
+class Hedgehog(Enemy): #Needs art, moves fast
+
+    def __init__(self, game, x, y):
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.approach_player_smart_fast, hp = 2, damage=1)
+        idle = SpriteSheet("bit.png", (2, 1), 2)
+        self.sprite.add_animation({"Idle": idle})
+        self.sprite.start_animation("Idle")
+

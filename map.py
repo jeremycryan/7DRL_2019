@@ -137,20 +137,21 @@ class Map(object):
                 if abs(spawn[0] - x) < 3 and abs(spawn[1] - y) < 3:
                     continue
                 if not self.get((x,y), "blocking"):
-                    if len(self.get((x,y)))==1:
-                        r = random.random()
-                        if r < 0.015:
-                            Bug(game, x, y)
-                        elif r < 0.03:
-                            Ebat(game, x, y)
-                        elif r < 0.04:
-                            Bit(game, x, y)
-                        elif r < 0.045:
-                            FlameSpawner(game, x, y)
-                        elif r < 0.05:
-                            GroundHazard_Fixed(game, x, y)
-                        elif r < 0.055:
-                            Bomb(game, x, y)
+
+                    r = random.random()
+                    if r < 0.015:
+                        Bug(game, x, y)
+                    elif r < 0.03:
+                        Ebat(game, x, y)
+                    elif r < 0.04:
+                        Bit(game, x, y)
+                    elif r < 0.045:
+                        FlameSpawner(game, x, y)
+                    elif r < 0.05:
+                        GroundHazard_Fixed(game, x, y)
+                    elif r < 0.06:
+                        Hedgehog(game, x, y)
+
 
 
     def add_to_cell(self, new_item, pos):
