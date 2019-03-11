@@ -36,8 +36,8 @@ class GameObject(object):
         self.sprite.x_pos -= xoff
         self.sprite.y_pos -= yoff
         if hasattr(self, "draw_hp"):
-            self.draw_hp(surf, self.sprite.x_pos + TILE_SIZE/2,
-                         self.sprite.y_pos)
+            self.draw_hp(surf, self.sprite.x_pos + self.sprite.animations[self.sprite.active_animation].get_frame(0).get_width()/2,
+                         self.sprite.y_pos - self.sprite.animations[self.sprite.active_animation].get_frame(0).get_height()/3 + 7 )
         self.sprite.draw(surf, self.flipped)
         self.sprite.y_pos += yoff
         self.sprite.x_pos += xoff
