@@ -27,6 +27,9 @@ class Game(object):
         self.byte_noise = pygame.mixer.Sound("audio/byte.wav")
         self.hit_noise = pygame.mixer.Sound("audio/hit.wav")
         self.mus = pygame.mixer.Sound("audio/music.wav")
+        self.tile_pickup = pygame.mixer.Sound("audio/pickup_tile.wav")
+        self.tile_drop = pygame.mixer.Sound("audio/drop_tile.wav")
+        self.stairs_sound = pygame.mixer.Sound("audio/stairs2.wav")
         self.mus.set_volume(0.5)
         self.mus.play(-1)
         
@@ -35,6 +38,7 @@ class Game(object):
         self.byte_noise.set_volume(0.4)
         self.bat_noise.set_volume(0.8)
         self.hit_noise.set_volume(0.4)
+        self.tile_pickup.set_volume(0.3)
         
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
@@ -279,6 +283,7 @@ class Game(object):
 
     def end_level(self):
         self.black_shade = UP
+        self.stairs_sound.play()
 
     def load_level(self, game_over=False):
         if game_over:

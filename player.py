@@ -56,6 +56,7 @@ class Player(GameObject):
             if isinstance(item, BlockItem):
                 self.blocks += [item.block]
                 self.game.editor.populate(self.blocks)
+                self.game.tile_pickup.play()
 
     def attack(self, dx, dy, swing_miss=False):
         # TODO generalize this for different weapon types/interactions

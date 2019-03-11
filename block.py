@@ -122,6 +122,8 @@ class MacroTile(object):
         else:
             self.remove_from_container()
 
+        self.editor.game.tile_drop.play()
+
 class Block (MacroTile):
     def __init__(self, path="", cost=1, duration=0, delay=0.25, editor=None, idx=0):
         MacroTile.__init__(self, editor, idx=idx, path=path)
