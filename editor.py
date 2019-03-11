@@ -12,6 +12,8 @@ class Editor(object):
     def __init__(self, populate_demo=False):
         self.window_surf = pygame.image.load("editor_window.png")
         self.window_x = pygame.image.load("editor_x.png")
+        self.next = pygame.image.load("next_page.png")
+        self.prev = pygame.image.load("prev_page.png")
         self.window_x_hovered = pygame.image.load("editor_x_hovered.png")
         self.window_xw = self.window_x.get_width()
         self.window_xh = self.window_x.get_height()
@@ -27,7 +29,7 @@ class Editor(object):
         self.tile_containers = []
         cnum = 3
         for i in range(cnum):
-            self.tile_containers.append(TileContainer(x = i * 60 + 35, y = 60))
+            self.tile_containers.append(TileContainer(x = i * 60 + 35, y = 39))
         self.container_width = self.tile_containers[0].surf.get_width()
         self.container_height = self.tile_containers[0].surf.get_height()
         self.carrying = []
@@ -37,6 +39,7 @@ class Editor(object):
         self.target_y = 0
         self.active = False
         self.shown = False
+        self.page = 0
 
         self.black = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT)).convert()
         self.black.fill((0, 0, 0))
@@ -50,10 +53,7 @@ class Editor(object):
             item.in_container = False
             item.scale = 0.5
             item.target_scale = 0.5
-            item.ty = 125
-            item.tx = 30*self.macro_tiles.index(item) + 50
-            item.x = item.tx
-            item.y = item.ty
+            item.reset(hard=True)
         for item in self.tile_containers:
             item.hovered = False
             item.tiles = []
@@ -92,6 +92,10 @@ class Editor(object):
                 c.draw(surf, eyoff = self.y)
             for tile in self.draw_order:
                 tile.draw(surf, eyoff = self.y)
+            if len(self.macro_tiles) > 12 and self.page == 0:
+                surf.blit(self.next, (214, self.y+120))
+            if self.page > 0:
+                surf.blit(self.prev, (18, self.y+120))
 
     def mouse_in_rect(self, x, y, w, h):
         mpos = pygame.mouse.get_pos()
@@ -106,7 +110,12 @@ class Editor(object):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.mouse_in_rect(206, self.y + 10, self.window_xw, self.window_xh):
                     self.hide()
-            
+                if len(self.macro_tiles) > 12 and self.page == 0:
+                    if self.mouse_in_rect(214, self.y+120, self.next.get_width(), self.next.get_height()):
+                        self.page += 1
+                if self.page > 0:
+                    if self.mouse_in_rect(18, self.y+120, self.next.get_width(), self.next.get_height()):
+                        self.page -= 1                        
         
 
     def update(self, dt):

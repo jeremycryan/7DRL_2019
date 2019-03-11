@@ -81,7 +81,7 @@ class Map(object):
         ROOM_MIN_SIZE = 3
         ROOM_MAX_SIZE = 5
         N = int(SEED_DENSITY*xmax*ymax)
-        seeds = [(random.randint(1, xmax-1), random.randint(1,ymax-1)) for i in range(N)]
+        seeds = [(random.randint(2, xmax-2), random.randint(2,ymax-2)) for i in range(N)]
         seeds.sort(key=lambda x: x[0])
         # Create path
         for i, s1 in enumerate(seeds[:-1]):
@@ -134,28 +134,29 @@ class Map(object):
     def populate_enemies(self, game, spawn, difficulty=1):
         for x in range(1, len(self.cells)-1):
             for y in range(1, len(self.cells[0])-1):
-                if abs(spawn[0] - x) < 3 and abs(spawn[1] - y) < 3:
+                if abs(spawn[0] - x) < 4 and abs(spawn[1] - y) < 4:
                     continue
                 if not self.get((x,y), "blocking"):
-                    if self.spawn_rate(difficulty, 0):
+                    if self.spawn_rate(difficulty, 0.5):
                         Bug(game, x, y)
-                    elif self.spawn_rate(difficulty, 0):
+                    elif self.spawn_rate(difficulty, 0.5):
                         Ebat(game, x, y)
-                    elif self.spawn_rate(difficulty, 1.5):
+                    elif self.spawn_rate(difficulty, 4):
                         Bit(game, x, y)
-                    elif self.spawn_rate(difficulty, 1):
-                        FlameSpawner(game, x, y)
-                    elif self.spawn_rate(difficulty, 1):
-                        GroundHazard_Fixed(game, x, y)
                     elif self.spawn_rate(difficulty, 2):
+                        FlameSpawner(game, x, y)
+                    elif self.spawn_rate(difficulty, 3):
+                        GroundHazard_Fixed(game, x, y)
+                    elif self.spawn_rate(difficulty, 5):
                         Hedgehog(game, x, y)
 
     def spawn_rate(self, level_difficulty, enemy_difficulty):
-        k0 = .02
+        k0 = .01
         kL = .2
-        kE = 1
         r = random.random()
-        return r < k0*(1 + (level_difficulty-1)*kL - enemy_difficulty*kE)
+        if level_difficulty < enemy_difficulty:
+            return False
+        return r < k0*(1+math.sqrt(kL*(level_difficulty - enemy_difficulty)))
 
 
     def add_to_cell(self, new_item, pos):

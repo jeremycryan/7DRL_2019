@@ -54,8 +54,18 @@ class MacroTile(object):
         self.update_from_mouse()
 
         if not self.in_container and not self.follow_mouse:
-            self.ty = 125
-            self.tx = 30*self.editor.macro_tiles.index(self) + 50
+            self.reset()
+
+    def reset(self, hard=False):
+        self.ty = 99 + 30*((self.editor.macro_tiles.index(self)//6)%2)
+        self.tx = 30*(self.editor.macro_tiles.index(self)%6) + 33
+        if self.editor.page > self.editor.macro_tiles.index(self)//12:
+            self.tx -= 300
+        elif self.editor.page < self.editor.macro_tiles.index(self)//12:
+            self.tx += 300
+        if hard:
+            self.x = self.tx
+            self.y = self.ty
 
     def update_from_mouse(self):
         x, y = [p//SCALE for p in pygame.mouse.get_pos()]

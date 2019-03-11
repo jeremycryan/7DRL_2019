@@ -48,11 +48,6 @@ class Game(object):
         self.delay = 0
         self.command_font = pygame.font.SysFont("monospace", 12)
         self.command_rectangles = {}
-        test_macro = Macro()
-        test_macro.add_block(Right())
-        test_macro.add_block(AttackRight())
-        test_macro.add_block(Left())
-        self.player.macros[0] = test_macro
 
         self.heart = pygame.image.load("heart.png")
         self.hheart = pygame.image.load("half_heart.png")
@@ -62,6 +57,7 @@ class Game(object):
         self.mana_bar = pygame.image.load("mana_outer_bar.png")
         self.mana_fill = pygame.image.load("mana_inner_bar.png")
         self.display_mana = self.player.mana
+        self.empty_tile = pygame.image.load("empty_tile_small.png")
 
 
     def update_mana_bar(self, dt):
@@ -77,7 +73,15 @@ class Game(object):
         new_width = int(self.display_mana*53//max_mana + 0.5)
         mana_fill = pygame.transform.scale(self.mana_fill, (new_width, self.mana_fill.get_height()))
         surf.blit(mana_fill, (14, 33))
-        
+        if not self.editor.active:
+            for i, macro in enumerate(self.player.macros):
+                empty = [False, False, False]
+                for j, block in (enumerate(macro.blocks) if macro else enumerate(empty)):
+                    x = 7+i*(24*3+5)+j*24
+                    if block:
+                        surf.blit(block.surf_small, (x, WINDOW_SIZE[1]-33))
+                    else:
+                        surf.blit(self.empty_tile, (x, WINDOW_SIZE[1]-33))
         hp = self.player.hp
         xoff = 10
         yoff = 10
@@ -115,7 +119,8 @@ class Game(object):
                 elif event.key == pygame.K_p:
                     self.load_level()
                 elif event.key == pygame.K_e:
-                    self.editor.toggle()
+                    if self.editor.active or self.player.mana == self.player.mana_max:
+                        self.editor.toggle()
                 elif event.key == pygame.K_z:
                     if self.editor.active:
                         self.player.macros[0] = self.editor.get_macro()
@@ -276,8 +281,9 @@ class Game(object):
 
     def load_level(self, game_over=False):
         if game_over:
-            self.level = 0
+            self.level = 1
             self.editor = Editor()
+            self.sel = CharacterSelect(self.screen_blit).sel
             self.player = Player(self, 0, 0, self.sel)
         else:
             self.level += 1
