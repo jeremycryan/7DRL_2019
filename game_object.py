@@ -15,8 +15,6 @@ class GameObject(object):
         self.flipped = False
         self.layer = layer
         self.game = game
-        self.map = game.map
-        game.map.add_to_cell(self, (x,y))
         self.sprite.x_pos = self.x * TILE_SIZE
         self.sprite.y_pos = self.y * TILE_SIZE
 
@@ -37,6 +35,9 @@ class GameObject(object):
         yoff = int(self.game.camera.get_y() + rebound[1] + hop)
         self.sprite.x_pos -= xoff
         self.sprite.y_pos -= yoff
+        if hasattr(self, "draw_hp"):
+            self.draw_hp(surf, self.sprite.x_pos + TILE_SIZE/2,
+                         self.sprite.y_pos)
         self.sprite.draw(surf, self.flipped)
         self.sprite.y_pos += yoff
         self.sprite.x_pos += xoff
@@ -53,6 +54,11 @@ class GameObject(object):
         self.vx = dx
         self.vy = dy
         self.hop = 1
+        if self.map.get((self.x, self.y), "stairs"):
+            self.game.end_level()
+        items = self.map.get((self.x, self.y), ("layer",ITEM_LAYER))
+        if items:
+            self.collect(items)
         return True
 
     def collide(self, x, y):
@@ -70,6 +76,10 @@ class GameObject(object):
 
     def get_hop(self):
         return -int(4*HOP*((abs(self.hop)-0.5)**2-0.25))
+
+    def collect(self, items):
+        for item in items:
+            self.map.remove_from_cell(item, (self.x, self.y))
 
 
 class Slash(GameObject):

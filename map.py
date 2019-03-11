@@ -2,6 +2,8 @@ from game_object import GameObject
 from sprite_tools import *
 import random
 from enemy import *
+from item import *
+from block import *
 from constants import *
 
 class Map(object):
@@ -42,7 +44,7 @@ class Map(object):
             Wall(game, xmax-1, y)
         for x in range(1, 6):
             for y in range(1, 6):
-                Tile(game, x, y)
+                pass#Tile(game, x, y)
 
 
     def populate_rooms(self, game):
@@ -71,11 +73,71 @@ class Map(object):
                                 Tile(game, x1, y1)
         self.populate_random(game, 0.9)
 
+    def populate_path(self, game, difficulty=1):
+        self.populate_wall(game)
+        xmax = len(self.cells)-1
+        ymax = len(self.cells[0])-1
+        SEED_DENSITY = 0.07
+        ROOM_MIN_SIZE = 3
+        ROOM_MAX_SIZE = 5
+        N = int(SEED_DENSITY*xmax*ymax)
+        seeds = [(random.randint(1, xmax-1), random.randint(1,ymax-1)) for i in range(N)]
+        seeds.sort(key=lambda x: x[0])
+        # Create path
+        for i, s1 in enumerate(seeds[:-1]):
+            s_min = None
+            d_min = None
+            for s2 in seeds[i+1:]:
+                d = abs(s2[0]-s1[0]) + abs(s2[1]-s1[1])
+                if not s_min or d < d_min:
+                    s_min = s2
+                    d_min = d
+            self.clear_path(game, s1, s_min)
+        # Create rooms
+        for s in seeds:
+            w = random.randint(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+            h = random.randint(ROOM_MIN_SIZE, ROOM_MAX_SIZE)
+            for x1 in range(s[0], s[0]+w):
+                if x1 >= 1 and x1 < xmax:
+                    for y1 in range(s[1], s[1]+h):
+                        if y1 >= 1 and y1 < ymax:
+                            if not self.get((x1, y1)):
+                                Tile(game, x1, y1)
+        # Fill walls
+        for x in range(1, xmax):
+            for y in range(1, ymax):
+                if not self.get((x,y)):
+                    Wall(game, x, y)
+        # Spawn enemies
+        if random.random() < 0.5:
+            seeds.sort(key=lambda x: x[1])
+        if random.random() < 0.5:
+            seeds = seeds[::-1]
+        Stairs(game, seeds[-1][0], seeds[-1][1])
+        self.populate_enemies(game, seeds[0], difficulty)
+        return seeds[0]
 
-    def populate_enemies(self, game, difficulty=1):
+    def clear_path(self, game, s1, s2):
+        x, y = s1[0], s1[1]
+        while True:
+            Tile(game, x, y)
+            dx = s2[0]-x
+            dy = s2[1]-y
+            if dx == 0 and dy == 0:
+                return
+            if abs(dx) >= abs(dy):
+                x += 1 if dx>0 else -1
+            else:
+                y += 1 if dy>0 else -1
+        
+
+    def populate_enemies(self, game, spawn, difficulty=1):
         for x in range(1, len(self.cells)-1):
             for y in range(1, len(self.cells[0])-1):
+                if abs(spawn[0] - x) < 3 and abs(spawn[1] - y) < 3:
+                    continue
                 if not self.get((x,y), "blocking"):
+
                     r = random.random()
                     if r < 0.015:
                         Bug(game, x, y)
@@ -87,10 +149,9 @@ class Map(object):
                         FlameSpawner(game, x, y)
                     elif r < 0.05:
                         GroundHazard_Fixed(game, x, y)
-                    elif r < 0.055:
-                        Bomb(game, x, y)
                     elif r < 0.06:
                         Hedgehog(game, x, y)
+
 
 
     def add_to_cell(self, new_item, pos):
@@ -187,6 +248,8 @@ class Tile(GameObject):
         self.sprite.add_animation({"Static": static})
         self.sprite.start_animation("Static")
         self.static = True
+        self.map = game.map
+        game.map.add_to_cell(self, (x,y))
 
     def draw(self, surf):
         GameObject.draw(self, surf)
@@ -203,6 +266,18 @@ class Wall(Tile):
         self.sprite.start_animation("Static")
         self.static = True
 
+class Stairs(Tile):
+
+    def __init__(self, game, x, y, fps=4):
+        Tile.__init__(self, game, x, y, fps=fps)
+        self.layer = FLOOR_LAYER
+        sprite_paths = "stair.png"
+        static = SpriteSheet(sprite_paths, (1, 1), 1)
+        self.sprite.add_animation({"Static": static})
+        self.sprite.start_animation("Static")
+        self.static = True
+        self.stairs = True
+        self.avoid = True
 
 
 if __name__=="__main__":

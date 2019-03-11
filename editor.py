@@ -2,6 +2,8 @@
 import pygame
 from constants import *
 from sprite_tools import *
+from editor import *
+from macro import Macro
 import time
 import sys
 
@@ -15,10 +17,11 @@ class Editor(object):
         self.macro_tiles = []
 
         if populate_demo:
-            self.macro_tiles = [MacroTile(self, 0, 0, idx = 0, path= "move_left_tile"),
-                            MacroTile(self, 0, 0, idx = 1, path= "move_up_tile"),
-                            MacroTile(self, 0, 0, idx = 2, path= "move_down_tile"),
-                            MacroTile(self, 0, 0, idx = 3, path= "move_right_tile")]
+            self.macro_tiles = [MoveUp(self, idx = 0),
+                                MoveDown(self, idx = 1),
+                                MoveLeft(self, idx = 2),
+                                MoveRight(self, idx = 3)]
+
         self.draw_order = [item for item in self.macro_tiles]
         self.tile_containers = []
         cnum = 3
@@ -39,11 +42,19 @@ class Editor(object):
         self.black.set_alpha(255)
 
     def populate(self, blocks):
-        self.macro_tiles = [item.tile for item in blocks]
-        self.draw_order = [item.tile for item in blocks]
+        self.macro_tiles = [item for item in blocks]
+        self.draw_order = [item for item in blocks]
         self.carrying = []
-
+        for item in blocks:
+            item.in_container = False
+            item.scale = 0.5
+            item.target_scale = 0.5
+            item.ty = 125
+            item.tx = 30*self.macro_tiles.index(item) + 50
+            item.x = item.tx
+            item.y = item.ty
         for item in self.tile_containers:
+            item.hovered = False
             item.tiles = []
 
     def show(self):
@@ -51,6 +62,7 @@ class Editor(object):
         self.target_y = 0
         self.y = WINDOW_HEIGHT
         self.shown = True
+        self.populate(self.macro_tiles)
 
     def hide(self):
         self.target_y = WINDOW_HEIGHT + 5
@@ -59,8 +71,10 @@ class Editor(object):
     def toggle(self):
         if self.shown:
             self.hide()
+            return False
         else:
             self.show()
+            return True
 
     def draw(self, surf):
 
@@ -103,6 +117,15 @@ class Editor(object):
             if tile in c.tiles:
                 c.tiles.remove(tile)
 
+    def get_macro(self):
+        macro = Macro(len(self.tile_containers))
+        for i, container in enumerate(self.tile_containers):
+            if container.tiles:
+                macro.add_block(container.tiles[0], i)
+            else:
+                macro.add_block(False, i)
+        return macro
+
 
 class TileContainer(object):
 
@@ -134,123 +157,6 @@ class TileContainer(object):
             item.remove_from_container()
         self.tiles = [tile]
 
-
-class MacroTile(object):
-
-    def __init__(self, editor, x=0, y=0, idx = 0, path="move_right_tile"):
-        self.editor = editor
-        self.set_surf_from_path(path)
-        self.y = 125
-
-        self.x = 30 * idx + 50
-        self.tx = x
-        self.ty = y
-
-        self.full_w = self.surf.get_width()
-        self.full_h = self.surf.get_height()
-
-        self.follow_mouse = False
-        self.mouse_clicked = False
-        self.in_container = False
-
-        self.scale = 0.5
-        self.target_scale = 0.5
-
-    @property
-    def w(self):
-        return self.surf.get_width() * self.scale
-
-    @property
-    def h(self):
-        return self.surf.get_height() * self.scale
-
-
-    def set_surf_from_path(self, path):
-        self.surf = pygame.image.load(path + ".png")
-        self.surf_small = pygame.image.load(path + "_small.png")
-
-    def update(self, dt):
-        dx = self.tx - self.x
-        dy = self.ty - self.y
-        if abs(dx) < 1: self.x = self.tx
-        if abs(dy) < 1: self.y = self.ty
-
-        p = 15.0
-        self.x += dx * dt * p
-        self.y += dy * dt * p
-
-        ds = self.target_scale - self.scale
-        self.scale += ds * dt * 20.0
-
-        self.update_from_mouse()
-
-        if not self.in_container and not self.follow_mouse:
-            self.ty = 125
-            self.tx = 30*self.editor.macro_tiles.index(self) + 50
-
-    def update_from_mouse(self):
-        x, y = [p//SCALE for p in pygame.mouse.get_pos()]
-        new_click = pygame.mouse.get_pressed()[0]
-        if new_click and not self.mouse_clicked:
-            if (x >= self.x and x <= self.x + self.w):
-                if (y >= self.y and y <= self.y + self.h):
-                    self.pickup()
-        self.mouse_clicked = new_click
-        if not new_click and self.follow_mouse: self.putdown()
-
-        if self.follow_mouse:
-            self.tx = x - self.w/2
-            self.ty = y - self.h/2
-            self.editor.container_at((x, y))
-
-
-    def draw(self, surf, eyoff = 0):
-        xoff = 0
-        yoff = eyoff
-
-        surf_to_draw = self.surf
-        if self.scale <= 0.6:
-            surf_to_draw = self.surf_small
-        if abs(self.scale - 1.0) > 0.01:
-            surf_to_draw = pygame.transform.scale(surf_to_draw,
-                (int(self.full_w*self.scale), int(self.full_h*self.scale)))
-            xoff += 0
-            yoff += 0
-
-        surf.blit(surf_to_draw, (self.x + xoff, self.y + yoff))
-
-    def pickup(self):
-        self.follow_mouse = True
-        self.target_scale = 0.5
-
-        self.editor.draw_order.remove(self)
-        self.editor.draw_order.append(self)
-
-        if len(self.editor.carrying):
-            for item in self.editor.carrying:
-                if item != self:
-                    item.putdown()
-        self.editor.carrying.append(self)
-
-    def add_to_container(self):
-        self.in_container = True
-        self.target_scale = 1.0
-
-    def remove_from_container(self):
-        self.in_container = False
-        self.target_scale = 0.5
-        self.editor.remove_tile_from_containers(self)
-
-    def putdown(self):
-        self.follow_mouse = False
-        self.target_scale = 0.5
-
-        c = self.editor.container_at((self.x + self.w/2, self.y + self.h/2))
-        if c:
-            c.add_tile(self)
-            self.add_to_container()
-        else:
-            self.remove_from_container()
 
 
 if __name__=="__main__":

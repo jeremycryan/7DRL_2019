@@ -60,9 +60,13 @@ def approach_player_smart_fast(enemy, count = 2):
 
 def approach_player_smart_minelay(enemy):
 
-    enemy.spawn(enemy.x, enemy.y)
-    return approach_player_smart(enemy)
-    
+    x, y = enemy.x, enemy.y
+    a = approach_player_smart(enemy)
+    if abs(enemy.game.player.x - x) + abs(enemy.game.player.y - y) != 1:
+        if a:
+            enemy.spawn(x, y)
+    return a
+        
 
 def charge_player(enemy):
     if not hasattr(enemy, "charging"):
@@ -71,19 +75,23 @@ def charge_player(enemy):
     if enemy.charging:
         if player.x == enemy.x + enemy.vx:
             if player.y == enemy.y + enemy.vy: # Hit player
+                enemy.sprite.start_animation("Idle")
                 enemy.charging = False
         if enemy.translate(enemy.vx, enemy.vy): # Continue charge
             return True
         enemy.charging = False # Hit wall
+        enemy.sprite.start_animation("Idle")
         return False
     if enemy.map.is_straight_path((enemy.x, enemy.y), (player.x, player.y)):
         order = go_to(player.x - enemy.x, player.y - enemy.y)
         if player.x == enemy.x + order[0][0]:
             if player.y == enemy.y + order[0][1]:
                 enemy.translate(*order[0]) # Hit player
+                enemy.sprite.start_animation("Idle")
                 return True
         if enemy.translate(*order[0]): # Start charge
             enemy.charging = True
+            enemy.sprite.start_animation("Charging")
             return True
     dx = player.x - enemy.x + enemy.vx
     dy = player.y - enemy.y + enemy.vy
