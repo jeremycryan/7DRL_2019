@@ -12,6 +12,7 @@ class Editor(object):
     def __init__(self, populate_demo=False):
         self.window_surf = pygame.image.load("editor_window.png")
         self.window_x = pygame.image.load("editor_x.png")
+        self.window_x_hovered = pygame.image.load("editor_x_hovered.png")
         self.window_xw = self.window_x.get_width()
         self.window_xh = self.window_x.get_height()
         self.macro_tiles = []
@@ -82,11 +83,31 @@ class Editor(object):
             self.black.set_alpha((255 - 255*self.y/WINDOW_HEIGHT)/2)
             surf.blit(self.black, (0, 0))
             surf.blit(self.window_surf, (0, self.y))
-            surf.blit(self.window_x, (206, self.y + 10))
+            x, y = 206, self.y + 10
+            if self.mouse_in_rect(x, y, self.window_xw, self.window_xh):
+                surf.blit(self.window_x_hovered, (x, y))
+            else:
+                surf.blit(self.window_x, (x, y))
             for c in self.tile_containers:
                 c.draw(surf, eyoff = self.y)
             for tile in self.draw_order:
                 tile.draw(surf, eyoff = self.y)
+
+    def mouse_in_rect(self, x, y, w, h):
+        mpos = pygame.mouse.get_pos()
+        if mpos[0] >= x*SCALE and mpos[0] <= (x + w)*SCALE:
+            if mpos[1] >= y*SCALE and mpos[1] <= (y + h)*SCALE:
+                return True
+
+        return False
+
+    def update_mouse_events(self, events):
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.mouse_in_rect(206, self.y + 10, self.window_xw, self.window_xh):
+                    self.hide()
+            
+        
 
     def update(self, dt):
 

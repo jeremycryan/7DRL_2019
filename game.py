@@ -80,6 +80,7 @@ class Game(object):
 
 
     def handle_events(self, events):
+        self.editor.update_mouse_events(events)
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -172,6 +173,7 @@ class Game(object):
             self.screen.fill((0, 0, 0))
             for obj in self.movers + self.effects + [self.editor]:
                 obj.update(dt)
+            
             self.update_camera_target()
             #self.map.update(dt, (0, 30), (0, 30))
             self.draw_map()
