@@ -9,7 +9,8 @@ import sys
 
 class Editor(object):
 
-    def __init__(self, populate_demo=False):
+    def __init__(self, game, populate_demo=False):
+        self.game = game
         self.window_surf = pygame.image.load("editor_window.png")
         self.window_x = pygame.image.load("editor_x.png")
         self.window_x_hovered = pygame.image.load("editor_x_hovered.png")
@@ -64,10 +65,12 @@ class Editor(object):
         self.y = WINDOW_HEIGHT
         self.shown = True
         self.populate(self.macro_tiles)
+        self.game.mus.set_volume(0.15)
 
     def hide(self):
         self.target_y = WINDOW_HEIGHT + 5
         self.shown = False
+        self.game.mus.set_volume(0.5)
 
     def toggle(self):
         if self.shown:

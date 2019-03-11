@@ -25,6 +25,7 @@ class Game(object):
         self.ram_noise = pygame.mixer.Sound("audio/ram.wav")
         self.firewall_noise = pygame.mixer.Sound("audio/firewall.wav")
         self.byte_noise = pygame.mixer.Sound("audio/byte.wav")
+        self.hit_noise = pygame.mixer.Sound("audio/hit.wav")
         self.mus = pygame.mixer.Sound("audio/music.wav")
         self.mus.set_volume(0.5)
         self.mus.play(-1)
@@ -32,10 +33,12 @@ class Game(object):
         self.swish_noise.set_volume(0.7)
         self.ram_noise.set_volume(0.6)
         self.byte_noise.set_volume(0.4)
+        self.bat_noise.set_volume(0.8)
+        self.hit_noise.set_volume(0.4)
         
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
-        self.editor = Editor()
+        self.editor = Editor(self)
         self.sel = CharacterSelect(self.screen_blit).sel
         self.player = Player(self, 0, 0, idx = self.sel)
         self.camera = Camera()
@@ -280,7 +283,7 @@ class Game(object):
     def load_level(self, game_over=False):
         if game_over:
             self.level = 0
-            self.editor = Editor()
+            self.editor = Editor(self)
             self.player = Player(self, 0, 0, self.sel)
         else:
             self.level += 1
