@@ -55,8 +55,8 @@ class CharacterSelect(object):
 
         self.black = pygame.Surface((WINDOW_SIZE)).convert()
         self.black.fill((0, 0, 0))
-        self.black.set_alpha(0)
-        self.black_alpha = 0
+        self.black.set_alpha(255)
+        self.black_alpha = 255
         self.fadeout = False
 
         self.main()
@@ -70,6 +70,11 @@ class CharacterSelect(object):
             now = time.time()
             dt = now - then
             then = now
+
+            if not self.fadeout:
+                rate = 500
+                self.black_alpha = max(0, self.black_alpha - rate*dt)
+                self.black.set_alpha(self.black_alpha)
 
             if self.fadeout:
                 rate = 350

@@ -48,7 +48,10 @@ class Player(GameObject):
             return True # Able to hit enemy
         if self.map.get((self.x+dx, self.y+dy), ("layer", 4), ("hittable", True)):
             return False # Enemy blocking square
-        return GameObject.translate(self, dx, dy)
+        return_val = GameObject.translate(self, dx, dy)
+        if return_val: self.game.player_move_sound.play()
+        return return_val
+        
 
     def collect(self, items):
         for item in items:

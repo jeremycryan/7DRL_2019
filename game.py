@@ -30,16 +30,21 @@ class Game(object):
         self.tile_pickup = pygame.mixer.Sound("audio/pickup_tile.wav")
         self.tile_drop = pygame.mixer.Sound("audio/drop_tile.wav")
         self.stairs_sound = pygame.mixer.Sound("audio/stairs2.wav")
+        self.player_move_sound = pygame.mixer.Sound("audio/player_move.wav")
+        self.nope = pygame.mixer.Sound("audio/nope.wav")
+        self.close_editor = pygame.mixer.Sound("audio/close_editor.wav")
         self.mus.set_volume(0.5)
         self.mus.play(-1)
         
         self.swish_noise.set_volume(0.7)
+        self.nope.set_volume(0.1)
+        self.close_editor.set_volume(0.1)
         self.ram_noise.set_volume(0.6)
         self.byte_noise.set_volume(0.4)
         self.bat_noise.set_volume(0.8)
         self.hit_noise.set_volume(0.4)
         self.tile_pickup.set_volume(0.3)
-        
+        self.player_move_sound.set_volume(0.00)
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
         self.editor = Editor(self)
@@ -63,6 +68,7 @@ class Game(object):
         self.hheart = pygame.image.load("half_heart.png")
         self.eheart = pygame.image.load("empty_heart.png")
         self.heart_width = self.heart.get_width()
+        self.macro_frame = pygame.image.load("macro_frame.png")
 
         self.mana_bar = pygame.image.load("mana_outer_bar.png")
         self.mana_fill = pygame.image.load("mana_inner_bar.png")
@@ -83,15 +89,14 @@ class Game(object):
         new_width = int(self.display_mana*53//max_mana + 0.5)
         mana_fill = pygame.transform.scale(self.mana_fill, (new_width, self.mana_fill.get_height()))
         surf.blit(mana_fill, (14, 33))
-        if not self.editor.active:
+        if True:
+            surf.blit(self.macro_frame, (175, 10))
             for i, macro in enumerate(self.player.macros):
                 empty = [False, False, False]
                 for j, block in (enumerate(macro.blocks) if macro else enumerate(empty)):
-                    x = 7+i*(24*3+5)+j*24
+                    x = j * 13 + 194
                     if block:
-                        surf.blit(block.surf_small, (x, WINDOW_SIZE[1]-33))
-                    else:
-                        surf.blit(self.empty_tile, (x, WINDOW_SIZE[1]-33))
+                        surf.blit(block.surf_item, (x, 13 + 17*(i%3)))
         hp = self.player.hp
         xoff = 10
         yoff = 10
@@ -129,27 +134,35 @@ class Game(object):
                 elif event.key == pygame.K_p:
                     self.load_level()
                 elif event.key == pygame.K_e:
-                    if self.editor.active or self.player.mana == self.player.mana_max:
-                        self.editor.toggle()
+                    self.editor.toggle()
                 elif event.key == pygame.K_z:
                     if self.editor.active:
-                        self.player.macros[0] = self.editor.get_macro()
-                        self.player.mana = 0
-                        self.editor.toggle()
+                        if self.player.mana >= 5:
+                            self.player.macros[0] = self.editor.get_macro()
+                            self.player.mana -= 5
+                            self.editor.toggle()
+                        else:
+                            self.nope.play()
                     elif self.player in self.turn_queue:
                         self.player.macro = self.player.macros[0]
                 elif event.key == pygame.K_x:
                     if self.editor.active:
-                        self.player.macros[1] = self.editor.get_macro()
-                        self.player.mana = 0
-                        self.editor.toggle()
+                        if self.player.mana >= 5:
+                            self.player.macros[1] = self.editor.get_macro()
+                            self.player.mana -= 5
+                            self.editor.toggle()
+                        else:
+                            self.nope.play()
                     elif self.player in self.turn_queue:
                         self.player.macro = self.player.macros[1]
                 elif event.key == pygame.K_c:
                     if self.editor.active:
-                        self.player.macros[2] = self.editor.get_macro()
-                        self.player.mana = 0
-                        self.editor.toggle()
+                        if self.player.mana >= 5:
+                            self.player.macros[2] = self.editor.get_macro()
+                            self.player.mana -= 5
+                            self.editor.toggle()
+                        else:
+                            self.nope.play()
                     elif self.player in self.turn_queue:
                         self.player.macro = self.player.macros[2]
 
@@ -218,7 +231,6 @@ class Game(object):
             self.update_black_screen(dt)
             self.update_mana_bar(dt)
             self.update_screen()
-            self.draw_fps(real_dt)   #   TODO remove from final build
             pygame.display.flip()
 
 

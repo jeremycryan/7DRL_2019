@@ -36,6 +36,7 @@ class MacroTile(object):
     def set_surf_from_path(self, path):
         self.surf = pygame.image.load(path + ".png")
         self.surf_small = pygame.image.load(path + "_small.png")
+        self.surf_item = pygame.image.load(path + "_item.png")
 
     def update(self, dt):
         dx = self.tx - self.x

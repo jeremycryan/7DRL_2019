@@ -16,6 +16,13 @@ class Editor(object):
         self.next = pygame.image.load("next_page.png")
         self.prev = pygame.image.load("prev_page.png")
         self.window_x_hovered = pygame.image.load("editor_x_hovered.png")
+        self.save_to_key = pygame.image.load("save_to_key.png")
+        self.z_button = pygame.image.load("z_button.png")
+        self.x_button = pygame.image.load("x_button.png")
+        self.c_button = pygame.image.load("c_button.png")
+        self.z_button_hovered = pygame.image.load("z_button_hovered.png")
+        self.x_button_hovered = pygame.image.load("x_button_hovered.png")
+        self.c_button_hovered = pygame.image.load("c_button_hovered.png")
         self.window_xw = self.window_x.get_width()
         self.window_xh = self.window_x.get_height()
         self.macro_tiles = []
@@ -71,6 +78,7 @@ class Editor(object):
         self.target_y = WINDOW_HEIGHT + 5
         self.shown = False
         self.game.mus.set_volume(0.5)
+        self.game.close_editor.play()
 
     def toggle(self):
         if self.shown:
@@ -99,6 +107,20 @@ class Editor(object):
                 surf.blit(self.next, (214, self.y+120))
             if self.page > 0:
                 surf.blit(self.prev, (18, self.y+120))
+                
+            surf.blit(self.save_to_key, (76, y ))
+            if not self.mouse_in_rect(148, y, 15, 14):
+                surf.blit(self.z_button, (148, y ))
+            else:
+                surf.blit(self.z_button_hovered, (148, y))
+            if not self.mouse_in_rect(165, y, 15, 14):
+                surf.blit(self.x_button, (165, y ))
+            else:
+                surf.blit(self.x_button_hovered, (165, y))
+            if not self.mouse_in_rect(182, y, 15, 14):
+                surf.blit(self.c_button, (182, y ))
+            else:
+                surf.blit(self.c_button_hovered, (182, y))
 
     def mouse_in_rect(self, x, y, w, h):
         mpos = pygame.mouse.get_pos()
@@ -118,8 +140,29 @@ class Editor(object):
                         self.page += 1
                 if self.page > 0:
                     if self.mouse_in_rect(18, self.y+120, self.next.get_width(), self.next.get_height()):
-                        self.page -= 1                        
-        
+                        self.page -= 1
+                y = self.y + 10
+                if self.mouse_in_rect(148, y, 15, 14):
+                    if self.game.player.mana >= 5:
+                        self.game.player.macros[0] = self.get_macro()
+                        self.game.player.mana -= 5
+                        self.toggle()
+                    else:
+                        self.game.nope.play()
+                if self.mouse_in_rect(165, y, 15, 14):
+                    if self.game.player.mana >= 5:
+                        self.game.player.macros[1] = self.get_macro()
+                        self.game.player.mana -= 5
+                        self.toggle()
+                    else:
+                        self.game.nope.play()
+                if self.mouse_in_rect(182, y, 15, 14):
+                    if self.game.player.mana >= 5:
+                        self.game.player.macros[2] = self.get_macro()
+                        self.game.player.mana -= 5
+                        self.toggle()
+                    else:
+                        self.game.nope.play()
 
     def update(self, dt):
 
