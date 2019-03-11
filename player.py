@@ -76,6 +76,7 @@ class Player(GameObject):
 
     def swing(self, dx, dy):
         self.slash.start_slash(self.x+dx, self.y+dy, (dx, dy))
+        self.game.swish_noise.play()
 
     def take_damage(self, damage):
         self.game.camera.shake()

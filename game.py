@@ -16,7 +16,20 @@ from character_select import *
 class Game(object):
 
     def __init__(self):
+        pygame.mixer.init(48000, -16, 2, 1024)
         pygame.init()
+
+        self.bug_noise = pygame.mixer.Sound("audio/bug.wav")
+        self.bat_noise = pygame.mixer.Sound("audio/ebat.wav")
+        self.swish_noise = pygame.mixer.Sound("audio/swish.wav")
+        self.ram_noise = pygame.mixer.Sound("audio/ram.wav")
+        self.firewall_noise = pygame.mixer.Sound("audio/firewall.wav")
+        self.byte_noise = pygame.mixer.Sound("audio/byte.wav")
+
+        self.swish_noise.set_volume(0.5)
+        self.ram_noise.set_volume(0.6)
+        self.byte_noise.set_volume(0.4)
+        
         self.screen_blit = pygame.display.set_mode(BLIT_SIZE)
         self.screen = pygame.Surface(WINDOW_SIZE)
         self.editor = Editor()
