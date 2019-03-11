@@ -98,23 +98,29 @@ class Game(object):
                     self.move_player(1, 0)
                 elif event.key == pygame.K_SPACE:
                     self.move_player(0, 0)
+                    self.player.mana = self.player.mana_max
+                elif event.key == pygame.K_p:
+                    self.load_level()
                 elif event.key == pygame.K_e:
                     self.editor.toggle()
                 elif event.key == pygame.K_z:
                     if self.editor.active:
                         self.player.macros[0] = self.editor.get_macro()
+                        self.player.mana = 0
                         self.editor.toggle()
                     elif self.player in self.turn_queue:
                         self.player.macro = self.player.macros[0]
                 elif event.key == pygame.K_x:
                     if self.editor.active:
                         self.player.macros[1] = self.editor.get_macro()
+                        self.player.mana = 0
                         self.editor.toggle()
                     elif self.player in self.turn_queue:
                         self.player.macro = self.player.macros[1]
                 elif event.key == pygame.K_c:
                     if self.editor.active:
                         self.player.macros[2] = self.editor.get_macro()
+                        self.player.mana = 0
                         self.editor.toggle()
                     elif self.player in self.turn_queue:
                         self.player.macro = self.player.macros[2]
@@ -262,6 +268,7 @@ class Game(object):
             self.player = Player(self, 0, 0, self.sel)
         else:
             self.level += 1
+        print(self.level)
         self.movers = [self.player]
         self.effects = [self.player.slash]
         self.map = Map((30, 30))        

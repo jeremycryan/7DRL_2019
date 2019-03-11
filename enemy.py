@@ -152,6 +152,7 @@ class Bit(Enemy):
         self.sprite.add_animation({"Idle": idle, "Charging": charging})
         self.sprite.start_animation("Idle")
         self.charging = False
+        print("MINOTAUR")
 
     def draw(self, surf):
         self.sprite.y_pos -= 5
@@ -167,6 +168,7 @@ class FlameSpawner(Enemy): #Needs art, flame dude
         idle = SpriteSheet("flameboi.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
+        print("FLAME")
 
     def spawn(self, x, y):
         GroundHazard(self.game, x, y)
