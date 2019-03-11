@@ -15,6 +15,10 @@ class CharacterSelect(object):
         self.vicky_sprite = Sprite(4)
         self.prava_sprite = Sprite(4)
         self.nick_sprite = Sprite(4)
+
+        self.blip_sound = pygame.mixer.Sound("audio/blip.wav")
+        self.blip_sound.set_volume(0.1)
+        self.select_sound = pygame.mixer.Sound("audio/character_select.wav")
         
         will = SpriteSheet("will.png", (2, 1), 2)
         vicky = SpriteSheet("vicky.png", (2, 1), 2)
@@ -89,10 +93,13 @@ class CharacterSelect(object):
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_LEFT:
                             self.sel = max(0, self.sel - 1)
+                            self.blip_sound.play()
                         if event.key == pygame.K_RIGHT:
                             self.sel = min(3, self.sel + 1)
+                            self.blip_sound.play()
                         if event.key == pygame.K_RETURN:
                             self.fadeout = True
+                            self.select_sound.play()
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         sys.exit()

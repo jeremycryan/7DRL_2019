@@ -85,3 +85,4 @@ class Player(GameObject):
         self.blink = 0
         if self.hp <= 0:
             self.game.end_level()
+        self.game.hit_noise.play()
