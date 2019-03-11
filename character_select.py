@@ -20,10 +20,10 @@ class CharacterSelect(object):
         self.blip_sound.set_volume(0.16)
         self.select_sound = pygame.mixer.Sound("audio/character_select.wav")
         
-        will = SpriteSheet("will.png", (2, 1), 2)
-        vicky = SpriteSheet("vicky.png", (2, 1), 2)
-        prava = SpriteSheet("prava.png", (2, 1), 2)
-        nick = SpriteSheet("nick.png", (2, 1), 2)
+        will = SpriteSheet("images/will.png", (2, 1), 2)
+        vicky = SpriteSheet("images/vicky.png", (2, 1), 2)
+        prava = SpriteSheet("images/prava.png", (2, 1), 2)
+        nick = SpriteSheet("images/nick.png", (2, 1), 2)
 
         self.will_sprite.add_animation({"Idle": will})
         self.vicky_sprite.add_animation({"Idle": vicky})
@@ -43,7 +43,7 @@ class CharacterSelect(object):
         self.nick_sprite.set_position((92, 75))
         self.prava_sprite.set_position((158, 75))
 
-        self.back = pygame.image.load("char_select.png")
+        self.back = pygame.image.load("images/char_select.png")
         
         self.surf = surf
         self.blit_surf = pygame.Surface(WINDOW_SIZE)

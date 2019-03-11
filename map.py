@@ -248,7 +248,7 @@ class Tile(GameObject):
     def __init__(self, game, x, y, fps=4):
         GameObject.__init__(self, game, x, y, layer=0, fps=fps)
         self.layer = FLOOR_LAYER
-        sprite_paths = [("default_tile" + str(a) + ".png") for a in ["", 0, 1, 2, 3, 4]]
+        sprite_paths = [("images/default_tile" + str(a) + ".png") for a in ["", 0, 1, 2, 3, 4]]
         static = SpriteSheet(random.choice(sprite_paths), (1, 1), 1)
         self.sprite.add_animation({"Static": static})
         self.sprite.start_animation("Static")
@@ -265,7 +265,7 @@ class Wall(Tile):
         Tile.__init__(self, game, x, y, fps=fps)
         self.layer = WALL_LAYER
         self.blocking = True
-        sprite_paths = [("wall_tile" + str(a) + ".png") for a in ["", 0, 1, 2]]
+        sprite_paths = [("images/wall_tile" + str(a) + ".png") for a in ["", 0, 1, 2]]
         static = SpriteSheet(random.choice(sprite_paths), (1, 1), 1)
         self.sprite.add_animation({"Static": static})
         self.sprite.start_animation("Static")
@@ -276,7 +276,7 @@ class Stairs(Tile):
     def __init__(self, game, x, y, fps=4):
         Tile.__init__(self, game, x, y, fps=fps)
         self.layer = FLOOR_LAYER
-        sprite_paths = "stair.png"
+        sprite_paths = "images/stair.png"
         static = SpriteSheet(sprite_paths, (1, 1), 1)
         self.sprite.add_animation({"Static": static})
         self.sprite.start_animation("Static")

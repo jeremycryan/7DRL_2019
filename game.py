@@ -64,16 +64,16 @@ class Game(object):
         self.command_font = pygame.font.SysFont("monospace", 12)
         self.command_rectangles = {}
 
-        self.heart = pygame.image.load("heart.png")
-        self.hheart = pygame.image.load("half_heart.png")
-        self.eheart = pygame.image.load("empty_heart.png")
+        self.heart = pygame.image.load("images/heart.png")
+        self.hheart = pygame.image.load("images/half_heart.png")
+        self.eheart = pygame.image.load("images/empty_heart.png")
         self.heart_width = self.heart.get_width()
-        self.macro_frame = pygame.image.load("macro_frame.png")
+        self.macro_frame = pygame.image.load("images/macro_frame.png")
 
-        self.mana_bar = pygame.image.load("mana_outer_bar.png")
-        self.mana_fill = pygame.image.load("mana_inner_bar.png")
+        self.mana_bar = pygame.image.load("images/mana_outer_bar.png")
+        self.mana_fill = pygame.image.load("images/mana_inner_bar.png")
         self.display_mana = self.player.mana
-        self.empty_tile = pygame.image.load("empty_tile_small.png")
+        self.empty_tile = pygame.image.load("images/empty_tile_small.png")
 
 
     def update_mana_bar(self, dt):

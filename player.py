@@ -14,8 +14,8 @@ class Player(GameObject):
         self.hp_max = 3
         names = ["will", "nick", "vicky", "prava"]
         name = names[idx]
-        idle = SpriteSheet(name + ".png", (2, 1), 2)
-        hurt = SpriteSheet(name + "_damage.png", (1, 1), 1)
+        idle = SpriteSheet("images/" + name + ".png", (2, 1), 2)
+        hurt = SpriteSheet("images/" + name + "_damage.png", (1, 1), 1)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.add_animation({"Hurt": hurt})
         self.sprite.start_animation("Idle")

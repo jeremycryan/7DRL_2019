@@ -86,12 +86,12 @@ class Slash(GameObject):
 
     def __init__(self, game, x, y):
         GameObject.__init__(self, game, x, y, FACE_MONKEY_LAYER, fps=12)
-        blank = SpriteSheet("empty.png", (1, 1), 1)
-        left = SpriteSheet("slash_left.png", (5, 1), 5)
-        right = SpriteSheet("slash_left.png", (5, 1), 5)
+        blank = SpriteSheet("images/empty.png", (1, 1), 1)
+        left = SpriteSheet("images/slash_left.png", (5, 1), 5)
+        right = SpriteSheet("images/slash_left.png", (5, 1), 5)
         right.reverse(1, 0)
-        up = SpriteSheet("slash_up.png", (5, 1), 5)
-        down = SpriteSheet("slash_up.png", (5, 1), 5)
+        up = SpriteSheet("images/slash_up.png", (5, 1), 5)
+        down = SpriteSheet("images/slash_up.png", (5, 1), 5)
         down.reverse(0, 1)
         
         for obj in [left, right, up, down]: obj.repeat = False

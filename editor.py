@@ -11,18 +11,18 @@ class Editor(object):
 
     def __init__(self, game, populate_demo=False):
         self.game = game
-        self.window_surf = pygame.image.load("editor_window.png")
-        self.window_x = pygame.image.load("editor_x.png")
-        self.next = pygame.image.load("next_page.png")
-        self.prev = pygame.image.load("prev_page.png")
-        self.window_x_hovered = pygame.image.load("editor_x_hovered.png")
-        self.save_to_key = pygame.image.load("save_to_key.png")
-        self.z_button = pygame.image.load("z_button.png")
-        self.x_button = pygame.image.load("x_button.png")
-        self.c_button = pygame.image.load("c_button.png")
-        self.z_button_hovered = pygame.image.load("z_button_hovered.png")
-        self.x_button_hovered = pygame.image.load("x_button_hovered.png")
-        self.c_button_hovered = pygame.image.load("c_button_hovered.png")
+        self.window_surf = pygame.image.load("images/editor_window.png")
+        self.window_x = pygame.image.load("images/editor_x.png")
+        self.next = pygame.image.load("images/next_page.png")
+        self.prev = pygame.image.load("images/prev_page.png")
+        self.window_x_hovered = pygame.image.load("images/editor_x_hovered.png")
+        self.save_to_key = pygame.image.load("images/save_to_key.png")
+        self.z_button = pygame.image.load("images/z_button.png")
+        self.x_button = pygame.image.load("images/x_button.png")
+        self.c_button = pygame.image.load("images/c_button.png")
+        self.z_button_hovered = pygame.image.load("images/z_button_hovered.png")
+        self.x_button_hovered = pygame.image.load("images/x_button_hovered.png")
+        self.c_button_hovered = pygame.image.load("images/c_button_hovered.png")
         self.window_xw = self.window_x.get_width()
         self.window_xh = self.window_x.get_height()
         self.macro_tiles = []
@@ -207,8 +207,8 @@ class TileContainer(object):
 
     def __init__(self, x = 0, y = 0):
 
-        self.surf = pygame.image.load("editor_blank.png")
-        self.hover_surf = pygame.image.load("editor_blank_hover.png")
+        self.surf = pygame.image.load("images/editor_blank.png")
+        self.hover_surf = pygame.image.load("images/editor_blank_hover.png")
         self.x = x
         self.y = y
 

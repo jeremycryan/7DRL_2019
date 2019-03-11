@@ -12,7 +12,7 @@ class Enemy(GameObject):
 
     def __init__(self, game, x, y, delay=1, hp=1, damage=0.5, behavior=ai.approach_player_smart):
         GameObject.__init__(self, game, x, y, layer=4)
-        idle = SpriteSheet("bug.png", (2, 1), 2)
+        idle = SpriteSheet("images/bug.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
         self.behavior = behavior
@@ -26,8 +26,8 @@ class Enemy(GameObject):
         self.countdown = random.randint(0, delay)
         self.enemy = True
         self.hittable = True
-        self.heart = pygame.image.load("heart_small.png")
-        self.eheart = pygame.image.load("empty_heart_small.png")
+        self.heart = pygame.image.load("images/heart_small.png")
+        self.eheart = pygame.image.load("images/empty_heart_small.png")
         self.heart_width = self.heart.get_width()
         self.width = TILE_SIZE/2
         self.hp_visible = True
@@ -117,7 +117,7 @@ class Bug(Enemy):
     
     def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp=2)
-        readied = SpriteSheet("bug_readied.png", (2, 1), 2)
+        readied = SpriteSheet("images/bug_readied.png", (2, 1), 2)
         self.sprite.add_animation({"Readied": readied})
         self.death_noise = self.game.bug_noise
 
@@ -133,8 +133,8 @@ class Ebat(Enemy):
 
     def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=1, hp = 1, behavior=ai.move_random)
-        idle = SpriteSheet("ebat.png", (2, 1), 2)
-        readied = SpriteSheet("ebat_readied.png", (2, 1), 2)
+        idle = SpriteSheet("images/ebat.png", (2, 1), 2)
+        readied = SpriteSheet("images/ebat_readied.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle, "Readied": readied})
         self.sprite.start_animation("Idle")
         self.death_noise = self.game.bat_noise
@@ -151,8 +151,8 @@ class Bit(Enemy):
 
     def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=0, behavior=ai.charge_player, hp = 3)
-        idle = SpriteSheet("ram.png", (2, 1), 2)
-        charging = SpriteSheet("ram_charge.png", (2, 1), 2)
+        idle = SpriteSheet("images/ram.png", (2, 1), 2)
+        charging = SpriteSheet("images/ram_charge.png", (2, 1), 2)
         self.death_noise = self.game.ram_noise
         self.sprite.add_animation({"Idle": idle, "Charging": charging})
         self.sprite.start_animation("Idle")
@@ -169,7 +169,7 @@ class FlameSpawner(Enemy): #Needs art, flame dude
 
     def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=0, behavior=ai.approach_player_smart_minelay, hp = 1)
-        idle = SpriteSheet("flameboi.png", (2, 1), 2)
+        idle = SpriteSheet("images/flameboi.png", (2, 1), 2)
         self.death_noise = self.game.firewall_noise
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
@@ -181,9 +181,9 @@ class GroundHazard(Enemy): #Needs art, flame
 
     def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard, hp = 5)
-        high = SpriteSheet("fire.png", (2, 1), 2)
-        med = SpriteSheet("fire_low.png", (2, 1), 2)
-        low = SpriteSheet("fire_lower.png", (2, 1), 2)
+        high = SpriteSheet("images/fire.png", (2, 1), 2)
+        med = SpriteSheet("images/fire_low.png", (2, 1), 2)
+        low = SpriteSheet("images/fire_lower.png", (2, 1), 2)
         self.sprite.add_animation({"High": high,
                                     "Med": med,
                                    "Low": low})
@@ -210,7 +210,7 @@ class GroundHazard_Fixed(Enemy): #Needs art, spikes
 
     def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard_fixed, hp = 1)
-        idle = SpriteSheet("spikes.png", (1, 1), 1)
+        idle = SpriteSheet("images/spikes.png", (1, 1), 1)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
         self.hittable = False
@@ -221,7 +221,7 @@ class Bomb(Enemy): #Needs art, bomb
 
     def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=0, behavior=ai.hazard_bomb, hp = 3)
-        idle = SpriteSheet("bit.png", (2, 1), 2)
+        idle = SpriteSheet("images/bit.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
         self.hittable = False
@@ -232,7 +232,7 @@ class Hedgehog(Enemy): #Needs art, moves fast
 
     def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=0, behavior=ai.approach_player_smart_fast, hp = 1, damage=0.5)
-        idle = SpriteSheet("bit.png", (2, 1), 2)
+        idle = SpriteSheet("images/bit.png", (2, 1), 2)
         self.death_noise = self.game.byte_noise
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
