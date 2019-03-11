@@ -54,9 +54,15 @@ def approach_player_smart(enemy):
     return False
 
 def approach_player_smart_fast(enemy, count = 2):
-    for x in range(count-1):
-        approach_player_smart(enemy)
-    return approach_player(enemy)
+    moved = False
+    for x in range(count):
+        dx = enemy.game.player.x - enemy.x
+        dy = enemy.game.player.y - enemy.y
+        if (abs(dx) + abs(dy) <= 1) and moved:
+            return True
+        return_val = approach_player_smart(enemy)
+        moved = True
+    return return_val
 
 def approach_player_smart_minelay(enemy):
 

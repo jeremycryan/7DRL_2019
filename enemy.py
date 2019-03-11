@@ -79,6 +79,8 @@ class Enemy(GameObject):
         self.game.movers.remove(self)
         if self.layer == 4 and random.random() < 0.12:
             self.drop_item()
+        if hasattr(self, "death_noise"):
+            self.death_noise.play()
 
     def drop_item(self, value=1):
         r = random.randint(0,7)
@@ -117,6 +119,7 @@ class Bug(Enemy):
         Enemy.__init__(self, game, x, y, delay=1.0, behavior=ai.approach_player_smart, hp=2)
         readied = SpriteSheet("bug_readied.png", (2, 1), 2)
         self.sprite.add_animation({"Readied": readied})
+        self.death_noise = self.game.bug_noise
 
     def move(self):
         Enemy.move(self)
@@ -134,6 +137,7 @@ class Ebat(Enemy):
         readied = SpriteSheet("ebat_readied.png", (2, 1), 2)
         self.sprite.add_animation({"Idle": idle, "Readied": readied})
         self.sprite.start_animation("Idle")
+        self.death_noise = self.game.bat_noise
 
     def move(self):
         Enemy.move(self)
@@ -149,6 +153,7 @@ class Bit(Enemy):
         Enemy.__init__(self, game, x, y, delay=0, behavior=ai.charge_player, hp = 3)
         idle = SpriteSheet("ram.png", (2, 1), 2)
         charging = SpriteSheet("ram_charge.png", (2, 1), 2)
+        self.death_noise = self.game.ram_noise
         self.sprite.add_animation({"Idle": idle, "Charging": charging})
         self.sprite.start_animation("Idle")
         self.charging = False
@@ -166,6 +171,7 @@ class FlameSpawner(Enemy): #Needs art, flame dude
     def __init__(self, game, x, y):
         Enemy.__init__(self, game, x, y, delay=0, behavior=ai.approach_player_smart_minelay, hp = 1)
         idle = SpriteSheet("flameboi.png", (2, 1), 2)
+        self.death_noise = self.game.firewall_noise
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
         print("FLAME")
@@ -227,8 +233,9 @@ class Bomb(Enemy): #Needs art, bomb
 class Hedgehog(Enemy): #Needs art, moves fast
 
     def __init__(self, game, x, y):
-        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.approach_player_smart_fast, hp = 2, damage=1)
+        Enemy.__init__(self, game, x, y, delay=0, behavior=ai.approach_player_smart_fast, hp = 1, damage=0.5)
         idle = SpriteSheet("bit.png", (2, 1), 2)
+        self.death_noise = self.game.byte_noise
         self.sprite.add_animation({"Idle": idle})
         self.sprite.start_animation("Idle")
 
