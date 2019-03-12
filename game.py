@@ -224,6 +224,7 @@ class Game(object):
             self.update_camera_target()
             #self.map.update(dt, (0, 30), (0, 30))
             self.draw_map()
+
             #self.player.draw(self.screen)
             #self.terminal.draw(self.screen)
             self.render_health(self.screen)
@@ -231,6 +232,7 @@ class Game(object):
             self.update_black_screen(dt)
             self.update_mana_bar(dt)
             self.update_screen()
+            self.draw_fps(dt)
             pygame.display.flip()
 
 
@@ -310,7 +312,6 @@ class Game(object):
             self.player = Player(self, 0, 0, self.sel)
         else:
             self.level += 1
-        print(self.level)
         self.movers = [self.player]
         self.effects = [self.player.slash]
         self.map = Map((30, 30))        
