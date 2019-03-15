@@ -12,6 +12,7 @@ from player import Player
 from enemy import *
 from editor import *
 from character_select import *
+from level_preview import *
 
 class Game(object):
 
@@ -59,7 +60,6 @@ class Game(object):
         self.black_screen.set_alpha(self.black_alpha)
         self.black_shade = DOWN
         
-        self.load_level()
         self.delay = 0
         self.command_font = pygame.font.SysFont("monospace", 12)
         self.command_rectangles = {}
@@ -74,6 +74,8 @@ class Game(object):
         self.mana_fill = pygame.image.load("images/mana_inner_bar.png")
         self.display_mana = self.player.mana
         self.empty_tile = pygame.image.load("images/empty_tile_small.png")
+
+        self.load_level()
 
 
     def update_mana_bar(self, dt):
@@ -325,6 +327,8 @@ class Game(object):
         self.player.sprite.x_pos = self.player.x * TILE_SIZE
         self.player.sprite.y_pos = self.player.y * TILE_SIZE
         self.player.macro = False
+
+        LevelPreview(self)
         
         self.black_shade = DOWN
         self.black_alpha = 255.0
