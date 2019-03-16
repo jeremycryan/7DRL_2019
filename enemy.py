@@ -83,7 +83,9 @@ class Enemy(GameObject):
             self.death_noise.play()
 
     def drop_item(self, value=1):
-        r = random.randint(0,7)
+        direction = random.randint(0,3)
+        val = random.randint(0,1+min(self.game.level//3,1))
+        r = direction + val*4
         if r == 0:
             BlockItem(self.game, self.x, self.y, Left(editor=self.game.editor))
         elif r == 1:
@@ -100,6 +102,14 @@ class Enemy(GameObject):
             BlockItem(self.game, self.x, self.y, AttackUp(editor=self.game.editor))
         elif r == 7:
             BlockItem(self.game, self.x, self.y, AttackDown(editor=self.game.editor))
+        elif r == 8:
+            BlockItem(self.game, self.x, self.y, JumpLeft(editor=self.game.editor))
+        elif r == 9:
+            BlockItem(self.game, self.x, self.y, JumpRight(editor=self.game.editor))
+        elif r == 10:
+            BlockItem(self.game, self.x, self.y, JumpUp(editor=self.game.editor))
+        elif r == 11:
+            BlockItem(self.game, self.x, self.y, JumpDown(editor=self.game.editor))
 
     def take_damage(self, amt):
         self.hp -= amt

@@ -211,3 +211,31 @@ class AttackRight(Block):
     def action(self, player):
         player.attack(*RIGHT, True)
 
+class JumpRight(Block):
+    def __init__(self, *args, **kwargs):
+        Block.__init__(self, *args, path="jump_right_tile", **kwargs)
+        
+    def action(self, player):
+        player.translate(2,0,False)
+
+class JumpLeft(Block):
+    def __init__(self, *args, **kwargs):
+        Block.__init__(self, *args, path="jump_left_tile", **kwargs)
+        
+    def action(self, player):
+        player.translate(-2,0,False)
+
+class JumpUp(Block):
+    def __init__(self, *args, **kwargs):
+        Block.__init__(self, *args, path="jump_up_tile", **kwargs)
+        
+    def action(self, player):
+        player.translate(0,-2,False)
+
+class JumpDown(Block):
+    def __init__(self, *args, **kwargs):
+        Block.__init__(self, *args, path="jump_down_tile", **kwargs)
+        
+    def action(self, player):
+        player.translate(0,2,False)
+

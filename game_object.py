@@ -17,6 +17,7 @@ class GameObject(object):
         self.game = game
         self.sprite.x_pos = self.x * TILE_SIZE
         self.sprite.y_pos = self.y * TILE_SIZE
+        self.hop_height = 1
 
     def update(self, dt):
         targ_x = self.x * TILE_SIZE
@@ -45,6 +46,8 @@ class GameObject(object):
     def translate(self, dx, dy):
         if self.collide(self.x+dx, self.y+dy):
             return False
+        if not self.map.get((self.x+dx, self.y+dy)): # off screen
+            return False
         self.map.remove_from_cell(self,(self.x, self.y))
         self.x += dx
         self.y += dy
@@ -54,6 +57,7 @@ class GameObject(object):
         self.vx = dx
         self.vy = dy
         self.hop = 1
+        self.hop_height = abs(dx)+abs(dy)
         if self.map.get((self.x, self.y), "stairs"):
             self.game.end_level()
         items = self.map.get((self.x, self.y), ("layer",ITEM_LAYER))
@@ -75,7 +79,9 @@ class GameObject(object):
         return (x,y)
 
     def get_hop(self):
-        return -int(4*HOP*((abs(self.hop)-0.5)**2-0.25))
+        if self.hop == 0:
+            self.hop_height = 1
+        return -int(4*HOP*((abs(self.hop)-0.5)**2-0.25))*self.hop_height
 
     def collect(self, items):
         for item in items:

@@ -179,7 +179,10 @@ class Map(object):
 
         map.get((0, 1), ("layer", 3), ("hidden", 0), "blocking")
         """
-
+        if self.size[0] <= pos[0] or self.size[1] <= pos[1]:
+            return []
+        if pos[0] < 0 or pos[1] < 0:
+            return []
         things_at_pos = self.cells[pos[0]][pos[1]]
         return_list = []
         for thing in things_at_pos:
