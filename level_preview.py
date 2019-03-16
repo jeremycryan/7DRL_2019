@@ -17,6 +17,12 @@ class LevelPreview(object):
         self.hp_surf.fill(self.gray)
         self.game.render_health(self.hp_surf)
 
+        self.level_font = pygame.font.SysFont("myriad", 20)
+        self.level_text = self.level_font.render("Level %s" % self.game.level,
+                                                 0, (255, 255, 255))
+        self.level_text_shadow = self.level_font.render("Level %s" % self.game.level,
+                                                 0, (0, 0, 0))
+
         self.show()
 
 
@@ -46,14 +52,17 @@ class LevelPreview(object):
 
             self.game.screen.fill(self.gray)
             self.black.set_alpha(self.black_alpha)
-            self.game.screen.blit(self.hp_surf, (WINDOW_WIDTH/2 - 40,
-                                                 WINDOW_HEIGHT/2 - 50))
+            self.game.screen.blit(self.hp_surf, (WINDOW_WIDTH/2 - 42,
+                                                 WINDOW_HEIGHT/2 - 34))
 
             self.game.player.update(dt)
-            self.game.player.sprite.x_pos = WINDOW_WIDTH/2 - 10
-            self.game.player.sprite.y_pos = WINDOW_HEIGHT/2 - 10
-            self.game.player.sprite.draw(self.game.screen)            
-
+            self.game.player.sprite.x_pos = WINDOW_WIDTH/2 - 11
+            self.game.player.sprite.y_pos = WINDOW_HEIGHT/2
+            self.game.player.sprite.draw(self.game.screen)
+            text_pos = (WINDOW_WIDTH/2 - self.level_text.get_width()/2,
+                        WINDOW_HEIGHT/2 - 40)
+            self.game.screen.blit(self.level_text_shadow, (text_pos[0], text_pos[1] + 1))
+            self.game.screen.blit(self.level_text, text_pos)
             
             self.game.screen.blit(self.black, (0, 0))
             self.game.screen_blit.blit(pygame.transform.scale(self.game.screen,
