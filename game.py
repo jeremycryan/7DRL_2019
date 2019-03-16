@@ -362,8 +362,8 @@ class Camera(object):
         dx = self.target_x - self.x
         dy = self.target_y - self.y
 
-        self.x += dx * dt * 3
-        self.y += dy * dt * 3
+        self.x += dx * dt * 5
+        self.y += dy * dt * 5
 
         self.shake_amp *= 0.04**dt
 
